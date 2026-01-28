@@ -13,71 +13,47 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* === 2025 DESIGN SYSTEM === */
         :root {
-            /* Dark Theme - Neo Noir */
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-tertiary: #1a1a24;
             --bg-card: rgba(255,255,255,0.03);
             --bg-card-hover: rgba(255,255,255,0.06);
-            --bg-glass: rgba(255,255,255,0.05);
-            
             --accent-primary: #6366f1;
             --accent-secondary: #8b5cf6;
             --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
             --accent-glow: rgba(99,102,241,0.4);
-            
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
-            
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            
             --border: rgba(255,255,255,0.06);
             --border-accent: rgba(99,102,241,0.3);
-            
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-            
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
             --shadow-glow: 0 0 40px var(--accent-glow);
-            
             --sidebar-width: 260px;
             --header-height: 64px;
             --nav-height: 72px;
         }
 
-        /* Light Theme - Clean Minimal */
         .theme-light {
             --bg-primary: #f8fafc;
             --bg-secondary: #f1f5f9;
             --bg-tertiary: #e2e8f0;
             --bg-card: rgba(0,0,0,0.02);
             --bg-card-hover: rgba(0,0,0,0.04);
-            --bg-glass: rgba(255,255,255,0.8);
-            
-            --accent-primary: #6366f1;
-            --accent-secondary: #8b5cf6;
-            --accent-glow: rgba(99,102,241,0.2);
-            
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
-            
             --border: rgba(0,0,0,0.06);
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
         }
 
-        /* Ocean Theme */
         .theme-ocean {
             --bg-primary: #0c1222;
             --bg-secondary: #111827;
@@ -88,7 +64,6 @@
             --accent-glow: rgba(6,182,212,0.4);
         }
 
-        /* Forest Theme */
         .theme-forest {
             --bg-primary: #0a1410;
             --bg-secondary: #0f1f18;
@@ -99,7 +74,6 @@
             --accent-glow: rgba(16,185,129,0.4);
         }
 
-        /* Sunset Theme */
         .theme-sunset {
             --bg-primary: #1a0a0f;
             --bg-secondary: #2a1015;
@@ -110,12 +84,7 @@
             --accent-glow: rgba(244,63,94,0.4);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         html, body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -126,251 +95,77 @@
             line-height: 1.5;
         }
 
-        /* === LAYOUT === */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
+        .app-container { display: flex; min-height: 100vh; }
 
-        /* === SIDEBAR (Desktop Only) === */
+        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
             position: fixed;
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
-            display: flex;
+            display: none;
             flex-direction: column;
             z-index: 100;
-            display: none;
         }
 
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-        }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); }
+        .sidebar-logo { font-size: 1.25rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .sidebar-logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+        .sidebar-user img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .sidebar-user-info { flex: 1; min-width: 0; }
+        .sidebar-user-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-user-email { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .sidebar-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .sidebar-user img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .sidebar-user-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .sidebar-user-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .sidebar-user-email {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 16px 12px;
-            overflow-y: auto;
-        }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
 
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-            border: none;
-            background: none;
-            width: 100%;
-            font-size: 0.9rem;
-            text-align: left;
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border-radius: var(--radius-md); color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s; margin-bottom: 4px;
+            border: none; background: none; width: 100%; font-size: 0.9rem; text-align: left;
         }
+        .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-item.active { background: rgba(99,102,241,0.1); color: var(--accent-primary); }
+        .nav-item .icon { font-size: 1.2rem; width: 24px; text-align: center; }
 
-        .nav-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
+        .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--border); }
+        .sidebar-xp { text-align: center; padding: 16px; background: var(--bg-card); border-radius: var(--radius-md); margin-bottom: 12px; }
+        .sidebar-xp-value { font-size: 1.5rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-xp-label { font-size: 0.75rem; color: var(--text-muted); }
 
-        .nav-item.active {
-            background: rgba(99,102,241,0.1);
-            color: var(--accent-primary);
-        }
+        .logout-btn { width: 100%; padding: 12px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); color: var(--danger); cursor: pointer; font-size: 0.9rem; }
 
-        .nav-item .icon {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .sidebar-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .sidebar-xp {
-            text-align: center;
-            padding: 16px;
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            margin-bottom: 12px;
-        }
-
-        .sidebar-xp-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .sidebar-xp-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.2);
-            border-radius: var(--radius-md);
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239,68,68,0.2);
-        }
-
-        /* === MOBILE HEADER === */
+        /* Mobile Header */
         .mobile-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
+            position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; z-index: 1000; backdrop-filter: blur(20px);
         }
+        .mobile-logo { font-size: 1.1rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .mobile-header-right { display: flex; align-items: center; gap: 12px; }
+        .xp-badge { background: var(--accent-gradient); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: white; }
+        .mobile-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--border); }
 
-        .mobile-logo {
-            font-size: 1.1rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .mobile-header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .xp-badge {
-            background: var(--accent-gradient);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .mobile-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid var(--border);
-        }
-
-        /* === BOTTOM NAV (Mobile Only) === */
+        /* Bottom Nav */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: var(--nav-height);
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1000;
-            backdrop-filter: blur(20px);
+            position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height);
+            background: var(--bg-secondary); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000; backdrop-filter: blur(20px);
         }
-
         .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 12px;
-            border-radius: var(--radius-md);
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            background: none;
-            font-size: 0.65rem;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 8px 12px; border-radius: var(--radius-md); color: var(--text-muted);
+            cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 0.65rem;
         }
+        .bottom-nav-item.active { color: var(--accent-primary); }
+        .bottom-nav-item .icon { font-size: 1.5rem; }
 
-        .bottom-nav-item.active {
-            color: var(--accent-primary);
-        }
-
-        .bottom-nav-item .icon {
-            font-size: 1.5rem;
-        }
-
-        /* === MAIN CONTENT === */
+        /* Main Content */
         .main-content {
             flex: 1;
             padding: calc(var(--header-height) + 16px) 16px calc(var(--nav-height) + 16px);
@@ -378,1172 +173,328 @@
             margin: 0 auto;
         }
 
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
 
-        .page.active {
-            display: block;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* === CARDS === */
+        /* Cards */
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 20px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px;
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+        .card-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+        /* Date Navigation */
+        .date-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom: 16px;
+        }
+        .date-nav-btn {
+            background: var(--bg-tertiary); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 10px 16px; color: var(--text-primary);
+            cursor: pointer; font-size: 1.2rem; transition: all 0.2s;
+        }
+        .date-nav-btn:hover { background: var(--bg-card-hover); }
+        .date-nav-current {
+            text-align: center; flex: 1;
+        }
+        .date-nav-title { font-size: 1.1rem; font-weight: 600; }
+        .date-nav-subtitle { font-size: 0.8rem; color: var(--text-muted); }
+        .date-nav-today {
+            background: var(--accent-gradient); border: none; border-radius: var(--radius-md);
+            padding: 8px 12px; color: white; cursor: pointer; font-size: 0.8rem; margin-left: 10px;
+        }
+
+        /* Quick Date Buttons */
+        .quick-dates {
+            display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 8px;
+        }
+        .quick-date-btn {
+            flex-shrink: 0; padding: 10px 16px; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: var(--radius-md);
+            color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+        }
+        .quick-date-btn:hover { background: var(--bg-card-hover); }
+        .quick-date-btn.active { background: var(--accent-primary); border-color: var(--accent-primary); color: white; }
+
+        /* Calendar Mini */
+        .calendar-mini {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
             margin-bottom: 16px;
-            transition: all 0.2s ease;
+        }
+        .calendar-day-header {
+            text-align: center; font-size: 0.7rem; color: var(--text-muted);
+            padding: 8px 0; font-weight: 600;
+        }
+        .calendar-day {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem;
+            transition: all 0.2s; position: relative;
+        }
+        .calendar-day:hover { background: var(--bg-card-hover); }
+        .calendar-day.today { border-color: var(--accent-primary); color: var(--accent-primary); font-weight: 600; }
+        .calendar-day.selected { background: var(--accent-primary); color: white; }
+        .calendar-day.other-month { opacity: 0.3; }
+        .calendar-day.has-tasks::after {
+            content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 4px; background: var(--success); border-radius: 50%;
         }
 
-        .card:hover {
-            background: var(--bg-card-hover);
+        /* Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+        .tab {
+            padding: 10px 18px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-md); color: var(--text-muted); cursor: pointer;
+            white-space: nowrap; font-size: 0.85rem; transition: all 0.2s;
         }
+        .tab.active { background: var(--accent-primary); border-color: var(--accent-primary); color: white; }
 
-        .card-glass {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-        }
-
-        .card-accent {
-            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
-            border-color: var(--border-accent);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* === WEATHER WIDGET === */
-        .weather-widget {
-            background: var(--accent-gradient);
-            border-radius: var(--radius-xl);
-            padding: 24px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .weather-widget::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-        }
-
-        .weather-main {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 1;
-        }
-
-        .weather-temp {
-            font-size: 3rem;
-            font-weight: 700;
-        }
-
-        .weather-icon {
-            font-size: 4rem;
-        }
-
-        .weather-details {
-            display: flex;
-            gap: 20px;
-            margin-top: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .weather-detail {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .weather-location {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-top: 8px;
-        }
-
-        .weather-tip {
-            margin-top: 12px;
-            padding: 12px;
-            background: rgba(255,255,255,0.15);
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-        }
-
-        /* === STATS GRID === */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-icon {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* === LEVEL PROGRESS === */
-        .level-card {
-            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15));
-            border: 1px solid var(--border-accent);
-        }
-
-        .level-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .level-badge {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .level-xp {
-            color: var(--warning);
-            font-weight: 600;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .level-rank {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 0.9rem;
-            color: var(--warning);
-        }
-
-        /* === BUTTONS === */
+        /* Buttons */
         .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            padding: 12px 20px; border: none; border-radius: var(--radius-md);
+            font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: var(--accent-gradient);
-            color: white;
-            box-shadow: 0 4px 12px var(--accent-glow);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 20px var(--accent-glow);
-        }
-
-        .btn-secondary {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .btn-danger {
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.2);
-            color: var(--danger);
-        }
-
-        .btn-sm {
-            padding: 8px 14px;
-            font-size: 0.8rem;
-        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--accent-gradient); color: white; box-shadow: 0 4px 12px var(--accent-glow); }
+        .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); }
+        .btn-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--danger); }
+        .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 
         .fab {
-            position: fixed;
-            bottom: calc(var(--nav-height) + 20px);
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--accent-gradient);
-            color: white;
-            font-size: 1.5rem;
-            border: none;
-            cursor: pointer;
-            box-shadow: var(--shadow-glow);
-            z-index: 99;
+            position: fixed; bottom: calc(var(--nav-height) + 20px); right: 20px;
+            width: 56px; height: 56px; border-radius: 50%; background: var(--accent-gradient);
+            color: white; font-size: 1.5rem; border: none; cursor: pointer;
+            box-shadow: var(--shadow-glow); z-index: 99;
         }
 
-        /* === INPUTS === */
+        /* Inputs */
         .input, .textarea, .select {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
+            width: 100%; padding: 14px 16px; background: var(--bg-tertiary);
+            border: 1px solid var(--border); border-radius: var(--radius-md);
+            color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s;
         }
+        .input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--accent-primary); }
+        .textarea { min-height: 100px; resize: vertical; }
+        .input-group { margin-bottom: 16px; }
+        .input-label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
 
-        .input:focus, .textarea:focus, .select:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+        /* Tasks */
+        .task-item {
+            display: flex; align-items: flex-start; padding: 14px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-md); margin-bottom: 8px; gap: 12px;
         }
+        .task-item.done { opacity: 0.5; }
+        .task-item.done .task-text { text-decoration: line-through; }
 
-        .textarea {
-            min-height: 100px;
-            resize: vertical;
+        .task-check {
+            width: 22px; height: 22px; border: 2px solid var(--accent-primary);
+            border-radius: 6px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0; margin-top: 2px;
         }
+        .task-check.checked { background: var(--success); border-color: var(--success); }
+        .task-check.checked::after { content: '✓'; color: white; font-size: 0.75rem; }
 
-        .input-group {
-            margin-bottom: 16px;
-        }
+        .task-content { flex: 1; min-width: 0; }
+        .task-text { font-size: 0.9rem; margin-bottom: 6px; }
+        .task-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .task-date { font-size: 0.75rem; color: var(--text-muted); }
+        .task-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+        .tag { padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
 
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+        .priority-high { background: var(--danger); }
+        .priority-medium { background: var(--warning); }
+        .priority-low { background: var(--success); }
 
-        /* === HABITS === */
-        .habit-item {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            margin-bottom: 10px;
-            gap: 14px;
-            transition: all 0.2s ease;
-        }
+        .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; opacity: 0.5; font-size: 1.2rem; padding: 4px; }
+        .delete-btn:hover { opacity: 1; }
 
-        .habit-item:hover {
-            background: var(--bg-card-hover);
-        }
+        /* Tags */
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-btn { padding: 6px 14px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .tag-btn.selected { border-color: white; }
+        .tag-colors { display: flex; gap: 10px; flex-wrap: wrap; }
+        .color-btn { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
+        .color-btn.selected { border-color: white; }
 
-        .habit-item.done {
-            background: rgba(16,185,129,0.1);
-            border-color: rgba(16,185,129,0.2);
-        }
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; }
+        .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
 
-        .habit-check {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
+        /* Level */
+        .level-card { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15)); border: 1px solid var(--border-accent); }
+        .level-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .level-badge { font-weight: 600; }
+        .level-xp { color: var(--warning); font-weight: 600; }
+        .progress-bar { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent-gradient); transition: width 0.5s; }
+        .level-rank { text-align: center; margin-top: 8px; font-size: 0.9rem; color: var(--warning); }
 
-        .habit-check.checked {
-            background: var(--success);
-            border-color: var(--success);
-        }
+        /* Weather */
+        .weather-widget { background: var(--accent-gradient); border-radius: var(--radius-xl); padding: 24px; color: white; position: relative; overflow: hidden; margin-bottom: 16px; }
+        .weather-main { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+        .weather-temp { font-size: 3rem; font-weight: 700; }
+        .weather-icon { font-size: 4rem; }
+        .weather-details { display: flex; gap: 20px; margin-top: 16px; position: relative; z-index: 1; }
+        .weather-detail { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; opacity: 0.9; }
+        .weather-location { font-size: 0.9rem; opacity: 0.8; margin-top: 8px; }
+        .weather-tip { margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.15); border-radius: var(--radius-md); font-size: 0.85rem; }
 
-        .habit-check.checked::after {
-            content: '✓';
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
+        /* Mood */
+        .mood-selector { display: flex; justify-content: center; gap: 8px; }
+        .mood-btn { font-size: 2rem; background: none; border: none; cursor: pointer; opacity: 0.4; transition: all 0.2s; padding: 8px; }
+        .mood-btn:hover, .mood-btn.selected { opacity: 1; transform: scale(1.2); }
+        .mood-history { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; }
+        .mood-day { flex-shrink: 0; text-align: center; padding: 10px; background: var(--bg-card); border-radius: var(--radius-md); min-width: 60px; }
+        .mood-day-emoji { font-size: 1.5rem; }
+        .mood-day-date { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; }
 
-        .habit-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .habit-name {
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .habit-streak {
-            font-size: 0.8rem;
-            color: var(--warning);
-        }
-
-        .habit-pct {
-            background: rgba(99,102,241,0.1);
-            color: var(--accent-primary);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            opacity: 0.5;
-            font-size: 1.2rem;
-            padding: 4px;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-        }
-
-        /* === SLEEP TRACKER === */
-        .sleep-widget {
-            text-align: center;
-        }
-
-        .sleep-display {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 4px;
-            margin-bottom: 20px;
-        }
-
-        .sleep-hours {
-            font-size: 4rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .sleep-unit {
-            font-size: 1.5rem;
-            color: var(--text-muted);
-        }
-
-        .sleep-slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .sleep-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: var(--accent-gradient);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .sleep-quality {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .quality-btn {
-            font-size: 2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.2s ease;
-            padding: 8px;
-        }
-
-        .quality-btn:hover, .quality-btn.selected {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        /* === MOOD === */
-        .mood-selector {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .mood-btn {
-            font-size: 2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.2s ease;
-            padding: 8px;
-        }
-
-        .mood-btn:hover, .mood-btn.selected {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        .mood-history {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 12px 0;
-        }
-
-        .mood-day {
-            flex-shrink: 0;
-            text-align: center;
-            padding: 10px;
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            min-width: 60px;
-        }
-
-        .mood-day-emoji {
-            font-size: 1.5rem;
-        }
-
-        .mood-day-date {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* === CHARTS === */
-        .chart-container {
-            position: relative;
-            height: 200px;
-            margin-top: 16px;
-        }
-
-        .chart-container.tall {
-            height: 280px;
-        }
-
-        /* === HEATMAP === */
-        .heatmap {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3px;
-        }
-
-        .heat-day {
-            width: 14px;
-            height: 14px;
-            border-radius: 3px;
-            background: var(--bg-tertiary);
-            transition: all 0.2s ease;
-        }
-
+        /* Heatmap */
+        .heatmap { display: flex; flex-wrap: wrap; gap: 3px; }
+        .heat-day { width: 14px; height: 14px; border-radius: 3px; background: var(--bg-tertiary); }
         .heat-day.l1 { background: rgba(99,102,241,0.3); }
         .heat-day.l2 { background: rgba(99,102,241,0.5); }
         .heat-day.l3 { background: rgba(99,102,241,0.7); }
         .heat-day.l4 { background: var(--success); }
 
-        /* === QUOTE === */
-        .quote-card {
-            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
-            border-color: var(--border-accent);
-            text-align: center;
-            cursor: pointer;
-        }
+        /* Quote */
+        .quote-card { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-color: var(--border-accent); text-align: center; cursor: pointer; }
+        .quote-text { font-size: 1rem; font-style: italic; line-height: 1.6; margin-bottom: 12px; }
+        .quote-author { font-size: 0.85rem; color: var(--accent-primary); }
 
-        .quote-text {
-            font-size: 1rem;
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
+        /* Habits */
+        .habit-item { display: flex; align-items: center; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 10px; gap: 14px; }
+        .habit-item.done { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); }
+        .habit-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .habit-check.checked { background: var(--success); border-color: var(--success); }
+        .habit-check.checked::after { content: '✓'; color: white; font-weight: bold; }
+        .habit-info { flex: 1; min-width: 0; }
+        .habit-name { font-weight: 500; }
+        .habit-streak { font-size: 0.8rem; color: var(--warning); }
+        .habit-pct { background: rgba(99,102,241,0.1); color: var(--accent-primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
 
-        .quote-author {
-            font-size: 0.85rem;
-            color: var(--accent-primary);
-        }
+        /* Water */
+        .water-display { text-align: center; }
+        .water-count { font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #06b6d4, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .water-glasses { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+        .water-glass { width: 32px; height: 44px; border: 2px solid var(--info); border-radius: 0 0 10px 10px; cursor: pointer; transition: all 0.2s; }
+        .water-glass.filled { background: var(--info); }
 
-        /* === MODAL === */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            align-items: flex-end;
-            justify-content: center;
-        }
+        /* Focus */
+        .focus-widget { text-align: center; padding: 32px; }
+        .focus-timer { font-size: 4rem; font-weight: 700; font-family: monospace; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .focus-status { color: var(--text-muted); margin-bottom: 24px; }
+        .focus-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        /* Sleep */
+        .sleep-widget { text-align: center; }
+        .sleep-display { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin-bottom: 20px; }
+        .sleep-hours { font-size: 4rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sleep-unit { font-size: 1.5rem; color: var(--text-muted); }
+        .sleep-slider { width: 100%; height: 8px; -webkit-appearance: none; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 20px; }
+        .sleep-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: var(--accent-gradient); border-radius: 50%; cursor: pointer; }
+        .sleep-quality { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+        .quality-btn { font-size: 2rem; background: none; border: none; cursor: pointer; opacity: 0.4; transition: all 0.2s; padding: 8px; }
+        .quality-btn:hover, .quality-btn.selected { opacity: 1; transform: scale(1.2); }
 
-        .modal {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-            padding: 24px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 85vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
+        /* Goals */
+        .goal-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; }
+        .goal-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .goal-title { font-weight: 600; }
+        .goal-bar { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; margin: 12px 0; }
+        .goal-fill { height: 100%; background: var(--accent-gradient); }
+        .goal-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .goal-pct { font-weight: 600; color: var(--accent-primary); font-size: 0.9rem; }
+        .goal-btns { display: flex; gap: 8px; }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
+        /* Achievements */
+        .achieve-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .achieve-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 8px; text-align: center; }
+        .achieve-item.unlocked { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(251,191,36,0.1)); border-color: rgba(245,158,11,0.3); }
+        .achieve-item.locked { opacity: 0.4; filter: grayscale(1); }
+        .achieve-icon { font-size: 1.8rem; margin-bottom: 6px; }
+        .achieve-name { font-size: 0.7rem; font-weight: 600; }
 
-        .modal-handle {
-            width: 40px;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            margin: 0 auto 20px;
-        }
+        /* Journal */
+        .journal-entry { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; }
+        .journal-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+        .journal-text { line-height: 1.6; font-size: 0.95rem; }
 
-        .modal h3 {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .modal-btns {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .modal-btns .btn {
-            flex: 1;
-        }
-
-        /* === AUTH === */
-        .auth-screen {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
-            background: var(--bg-primary);
-        }
-
-        .auth-logo {
-            font-size: 5rem;
-            margin-bottom: 24px;
-        }
-
-        .auth-title {
-            font-size: 2rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .auth-subtitle {
-            color: var(--text-muted);
-            margin-bottom: 40px;
-        }
-
-        .google-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 32px;
-            background: white;
-            color: #333;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.2s ease;
-        }
-
-        .google-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .google-btn img {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* === WATER === */
-        .water-display {
-            text-align: center;
-        }
-
-        .water-count {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .water-glasses {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .water-glass {
-            width: 32px;
-            height: 44px;
-            border: 2px solid var(--info);
-            border-radius: 0 0 10px 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .water-glass.filled {
-            background: var(--info);
-        }
-
-        /* === FOCUS === */
-        .focus-widget {
-            text-align: center;
-            padding: 32px;
-        }
-
-        .focus-timer {
-            font-size: 4rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .focus-status {
-            color: var(--text-muted);
-            margin-bottom: 24px;
-        }
-
-        .focus-btns {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        /* === CELEBRATE === */
-        .celebrate {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 5rem;
-            animation: celebrate 0.8s ease-out forwards;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        @keyframes celebrate {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
-        }
-
-        /* === ACHIEVEMENTS === */
-        .achieve-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .achieve-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px 8px;
-            text-align: center;
-        }
-
-        .achieve-item.unlocked {
-            background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(251,191,36,0.1));
-            border-color: rgba(245,158,11,0.3);
-        }
-
-        .achieve-item.locked {
-            opacity: 0.4;
-            filter: grayscale(1);
-        }
-
-        .achieve-icon {
-            font-size: 1.8rem;
-            margin-bottom: 6px;
-        }
-
-        .achieve-name {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* === LOADING === */
-        .loading {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* === THEME GRID === */
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .theme-option {
-            padding: 20px 16px;
-            border-radius: var(--radius-md);
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s ease;
-            font-size: 0.85rem;
-        }
-
-        .theme-option.selected {
-            border-color: var(--accent-primary);
-        }
-
+        /* Profile */
+        .profile-header { text-align: center; padding: 32px 20px; }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .theme-option { padding: 20px 16px; border-radius: var(--radius-md); text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 0.85rem; }
+        .theme-option.selected { border-color: var(--accent-primary); }
         .theme-option.t-dark { background: linear-gradient(135deg, #0a0a0f, #1a1a24); color: #fff; }
         .theme-option.t-light { background: linear-gradient(135deg, #f8fafc, #e2e8f0); color: #0f172a; }
         .theme-option.t-ocean { background: linear-gradient(135deg, #0c1222, #1e293b); color: #06b6d4; }
         .theme-option.t-forest { background: linear-gradient(135deg, #0a1410, #1a2f24); color: #10b981; }
         .theme-option.t-sunset { background: linear-gradient(135deg, #1a0a0f, #3d1a22); color: #f43f5e; }
 
-        /* === DESKTOP STYLES === */
+        /* Chart */
+        .chart-container { position: relative; height: 200px; margin-top: 16px; }
+        .chart-container.tall { height: 280px; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 2000; align-items: flex-end; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-secondary); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 24px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+        .modal h3 { margin-bottom: 20px; font-size: 1.1rem; }
+        .modal-btns { display: flex; gap: 12px; margin-top: 20px; }
+        .modal-btns .btn { flex: 1; }
+
+        /* Auth */
+        .auth-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+        .auth-logo { font-size: 5rem; margin-bottom: 24px; }
+        .auth-title { font-size: 2rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .auth-subtitle { color: var(--text-muted); margin-bottom: 40px; }
+        .google-btn { display: flex; align-items: center; gap: 12px; padding: 16px 32px; background: white; color: #333; border: none; border-radius: 50px; font-size: 1rem; font-weight: 500; cursor: pointer; }
+        .google-btn img { width: 24px; height: 24px; }
+
+        /* Loading */
+        .loading { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Celebrate */
+        .celebrate { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; animation: celebrate 0.8s ease-out forwards; pointer-events: none; z-index: 9999; }
+        @keyframes celebrate { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+
+        /* Desktop */
         @media (min-width: 900px) {
-            .mobile-header {
-                display: none !important;
-            }
-
-            .bottom-nav {
-                display: none !important;
-            }
-
-            .sidebar {
-                display: flex !important;
-            }
-
-            .main-content {
-                margin-left: var(--sidebar-width);
-                padding: 32px 40px;
-                max-width: 900px;
-            }
-
-            .fab {
-                bottom: 32px;
-                right: 40px;
-            }
-
-            .modal {
-                border-radius: var(--radius-xl);
-                margin: auto;
-            }
-
-            .modal-overlay {
-                align-items: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .achieve-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .chart-container {
-                height: 250px;
-            }
-
-            .chart-container.tall {
-                height: 320px;
-            }
+            .mobile-header { display: none !important; }
+            .bottom-nav { display: none !important; }
+            .sidebar { display: flex !important; }
+            .main-content { margin-left: var(--sidebar-width); padding: 32px 40px; max-width: 900px; }
+            .fab { bottom: 32px; right: 40px; }
+            .modal { border-radius: var(--radius-xl); margin: auto; }
+            .modal-overlay { align-items: center; }
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            .achieve-grid { grid-template-columns: repeat(4, 1fr); }
+            .chart-container { height: 250px; }
+            .calendar-mini { max-width: 400px; }
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-tertiary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 3px;
-        }
-
-        /* Tasks */
-        .task-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            margin-bottom: 8px;
-            gap: 12px;
-        }
-
-        .task-item.done { opacity: 0.5; }
-        .task-item.done .task-text { text-decoration: line-through; }
-
-        .task-check {
-            width: 22px;
-            height: 22px;
-            border: 2px solid var(--accent-primary);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .task-check.checked {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        .task-check.checked::after {
-            content: '✓';
-            color: white;
-            font-size: 0.75rem;
-        }
-
-        .task-content { flex: 1; min-width: 0; }
-        .task-text { font-size: 0.9rem; margin-bottom: 6px; }
-        .task-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-
-        .tag {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
-        .priority-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            margin-top: 6px;
-        }
-
-        .priority-high { background: var(--danger); }
-        .priority-medium { background: var(--warning); }
-        .priority-low { background: var(--success); }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .tab {
-            padding: 10px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-
-        .tab.active {
-            background: var(--accent-primary);
-            border-color: var(--accent-primary);
-            color: white;
-        }
-
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .tag-btn {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
-        }
-
-        .tag-btn.selected { border-color: white; }
-
-        .tag-colors {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .color-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-        }
-
-        .color-btn.selected { border-color: white; }
-
-        .goal-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .goal-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .goal-title { font-weight: 600; }
-        .goal-deadline { font-size: 0.8rem; color: var(--text-muted); }
-
-        .goal-bar {
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 12px 0;
-        }
-
-        .goal-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-        }
-
-        .goal-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .goal-pct {
-            font-weight: 600;
-            color: var(--accent-primary);
-            font-size: 0.9rem;
-        }
-
-        .goal-btns {
-            display: flex;
-            gap: 8px;
-        }
-
-        .journal-entry {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .journal-date {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .journal-text {
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .week-scroll {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 8px 0;
-        }
-
-        .week-day-card {
-            flex-shrink: 0;
-            width: 110px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 12px;
-        }
-
-        .week-day-card.today {
-            border-color: var(--accent-primary);
-        }
-
-        .week-day-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .week-day-name {
-            color: var(--accent-primary);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .week-day-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .week-task {
-            font-size: 0.7rem;
-            padding: 6px;
-            background: var(--bg-tertiary);
-            border-radius: 6px;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .week-task.done {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
-
-        .profile-header {
-            text-align: center;
-            padding: 32px 20px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--accent-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -1560,18 +511,9 @@
     </div>
 
     <div class="app-container" id="app" style="display:none;">
-        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">🚀 Productivity Pro</div>
-            </div>
-            <div class="sidebar-user">
-                <img id="sidePhoto" src="" alt="">
-                <div class="sidebar-user-info">
-                    <div class="sidebar-user-name" id="sideName">User</div>
-                    <div class="sidebar-user-email" id="sideEmail">email</div>
-                </div>
-            </div>
+            <div class="sidebar-header"><div class="sidebar-logo">🚀 Productivity Pro</div></div>
+            <div class="sidebar-user"><img id="sidePhoto" src=""><div class="sidebar-user-info"><div class="sidebar-user-name" id="sideName">User</div><div class="sidebar-user-email" id="sideEmail">email</div></div></div>
             <nav class="sidebar-nav">
                 <button class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span> Главная</button>
                 <button class="nav-item" onclick="showPage('habits')"><span class="icon">✅</span> Привычки</button>
@@ -1584,15 +526,11 @@
                 <button class="nav-item" onclick="showPage('profile')"><span class="icon">⚙️</span> Настройки</button>
             </nav>
             <div class="sidebar-footer">
-                <div class="sidebar-xp">
-                    <div class="sidebar-xp-value" id="sideXP">0 XP</div>
-                    <div class="sidebar-xp-label" id="sideLevel">Уровень 1</div>
-                </div>
+                <div class="sidebar-xp"><div class="sidebar-xp-value" id="sideXP">0 XP</div><div class="sidebar-xp-label" id="sideLevel">Уровень 1</div></div>
                 <button class="logout-btn" onclick="signOut()">🚪 Выйти</button>
             </div>
         </aside>
 
-        <!-- Mobile Header -->
         <header class="mobile-header">
             <div class="mobile-logo">🚀 Productivity</div>
             <div class="mobile-header-right">
@@ -1601,37 +539,27 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="main-content">
             <!-- HOME -->
             <div id="p-home" class="page active">
-                <!-- Weather -->
                 <div class="weather-widget" id="weatherWidget">
                     <div class="weather-main">
-                        <div>
-                            <div class="weather-temp" id="weatherTemp">--°</div>
-                            <div class="weather-location" id="weatherLocation">Загрузка...</div>
-                        </div>
+                        <div><div class="weather-temp" id="weatherTemp">--°</div><div class="weather-location" id="weatherLocation">Загрузка...</div></div>
                         <div class="weather-icon" id="weatherIcon">🌤️</div>
                     </div>
                     <div class="weather-details">
                         <div class="weather-detail"><span>💧</span><span id="weatherHumidity">--%</span></div>
                         <div class="weather-detail"><span>💨</span><span id="weatherWind">-- м/с</span></div>
                     </div>
-                    <div class="weather-tip" id="weatherTip">Отличный день для продуктивной работы!</div>
+                    <div class="weather-tip" id="weatherTip">Отличный день для продуктивности!</div>
                 </div>
 
-                <!-- Level -->
                 <div class="card level-card">
-                    <div class="level-header">
-                        <span class="level-badge">⚡ Уровень <span id="lvlNum">1</span></span>
-                        <span class="level-xp"><span id="xpNow">0</span>/<span id="xpNeed">100</span></span>
-                    </div>
+                    <div class="level-header"><span class="level-badge">⚡ Уровень <span id="lvlNum">1</span></span><span class="level-xp"><span id="xpNow">0</span>/<span id="xpNeed">100</span></span></div>
                     <div class="progress-bar"><div class="progress-fill" id="lvlBar" style="width:0%"></div></div>
                     <div class="level-rank" id="rankText">🌱 Новичок</div>
                 </div>
 
-                <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value" id="sStreak">0</div><div class="stat-label">Стрик</div></div>
                     <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="sTotal">0</div><div class="stat-label">Выполнено</div></div>
@@ -1639,7 +567,6 @@
                     <div class="stat-card"><div class="stat-icon">🍅</div><div class="stat-value" id="sPomo">0</div><div class="stat-label">Фокус</div></div>
                 </div>
 
-                <!-- Mood -->
                 <div class="card">
                     <div class="card-title">😊 Настроение</div>
                     <div class="mood-selector">
@@ -1652,29 +579,20 @@
                     <div class="mood-history" id="moodHist"></div>
                 </div>
 
-                <!-- Quote -->
                 <div class="card quote-card" onclick="newQuote()">
                     <div class="quote-text" id="qText">"Маленькие шаги каждый день ведут к большим переменам."</div>
                     <div class="quote-author" id="qAuthor">— Productivity Pro</div>
                 </div>
 
-                <!-- Heatmap -->
-                <div class="card">
-                    <div class="card-title">📅 Активность</div>
-                    <div class="heatmap" id="heatmap"></div>
-                </div>
+                <div class="card"><div class="card-title">📅 Активность</div><div class="heatmap" id="heatmap"></div></div>
             </div>
 
             <!-- HABITS -->
             <div id="p-habits" class="page">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">✅ Привычки</div>
-                        <button class="btn btn-sm btn-primary" onclick="openModal('habitModal')">+ Добавить</button>
-                    </div>
+                    <div class="card-header"><div class="card-title">✅ Привычки</div><button class="btn btn-sm btn-primary" onclick="openModal('habitModal')">+ Добавить</button></div>
                     <div id="habitsList"></div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">💧 Вода</div>
                     <div class="water-display">
@@ -1686,44 +604,62 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">📊 Прогресс</div>
-                    <div class="chart-container"><canvas id="habitsChart"></canvas></div>
-                </div>
+                <div class="card"><div class="card-title">📊 Прогресс</div><div class="chart-container"><canvas id="habitsChart"></canvas></div></div>
             </div>
 
-            <!-- TASKS -->
+            <!-- TASKS - IMPROVED -->
             <div id="p-tasks" class="page">
                 <div class="tabs">
-                    <button class="tab active" onclick="switchTaskTab('day')">День</button>
-                    <button class="tab" onclick="switchTaskTab('week')">Неделя</button>
-                    <button class="tab" onclick="switchTaskTab('month')">Месяц</button>
+                    <button class="tab active" onclick="setTaskView('day')">📅 День</button>
+                    <button class="tab" onclick="setTaskView('week')">📆 Неделя</button>
+                    <button class="tab" onclick="setTaskView('month')">🗓️ Месяц</button>
+                    <button class="tab" onclick="setTaskView('year')">📊 Год</button>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">🏷️ Фильтр</div>
-                        <button class="btn btn-sm btn-secondary" onclick="openModal('tagModal')">+ Тег</button>
+
+                <!-- Date Navigation -->
+                <div class="date-nav">
+                    <button class="date-nav-btn" onclick="navigateDate(-1)">◀</button>
+                    <div class="date-nav-current">
+                        <div class="date-nav-title" id="dateNavTitle">Сегодня</div>
+                        <div class="date-nav-subtitle" id="dateNavSubtitle">1 января 2025</div>
                     </div>
+                    <button class="date-nav-btn" onclick="navigateDate(1)">▶</button>
+                    <button class="date-nav-today" onclick="goToToday()">Сегодня</button>
+                </div>
+
+                <!-- Quick Dates (for day view) -->
+                <div class="quick-dates" id="quickDates"></div>
+
+                <!-- Calendar (for month view) -->
+                <div class="card" id="calendarCard" style="display:none;">
+                    <div class="calendar-mini" id="calendarMini"></div>
+                </div>
+
+                <!-- Tags Filter -->
+                <div class="card">
+                    <div class="card-header"><div class="card-title">🏷️ Фильтр</div><button class="btn btn-sm btn-secondary" onclick="openModal('tagModal')">+ Тег</button></div>
                     <div class="tags-container" id="tagFilter"></div>
                 </div>
-                <div id="taskContent"></div>
-                <button class="fab" onclick="openModal('taskModal')">+</button>
+
+                <!-- Tasks List -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title" id="tasksListTitle">📋 Задачи</div>
+                        <button class="btn btn-sm btn-primary" onclick="openTaskModal()">+ Задача</button>
+                    </div>
+                    <div id="tasksList"></div>
+                </div>
+
+                <button class="fab" onclick="openTaskModal()">+</button>
             </div>
 
             <!-- GOALS -->
             <div id="p-goals" class="page">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">🎯 Цели</div>
-                        <button class="btn btn-sm btn-primary" onclick="openModal('goalModal')">+ Добавить</button>
-                    </div>
+                    <div class="card-header"><div class="card-title">🎯 Цели</div><button class="btn btn-sm btn-primary" onclick="openModal('goalModal')">+ Добавить</button></div>
                     <div id="goalsList"></div>
                 </div>
-                <div class="card">
-                    <div class="card-title">🏆 Достижения</div>
-                    <div class="achieve-grid" id="achieveGrid"></div>
-                </div>
+                <div class="card"><div class="card-title">🏆 Достижения</div><div class="achieve-grid" id="achieveGrid"></div></div>
             </div>
 
             <!-- FOCUS -->
@@ -1742,10 +678,7 @@
                     <div class="stat-card"><div class="stat-icon">🍅</div><div class="stat-value" id="focusToday">0</div><div class="stat-label">Сегодня</div></div>
                     <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="focusTotal">0</div><div class="stat-label">Всего</div></div>
                 </div>
-                <div class="card">
-                    <div class="card-title">📊 Фокус за неделю</div>
-                    <div class="chart-container"><canvas id="focusChart"></canvas></div>
-                </div>
+                <div class="card"><div class="card-title">📊 Фокус за неделю</div><div class="chart-container"><canvas id="focusChart"></canvas></div></div>
             </div>
 
             <!-- SLEEP -->
@@ -1753,10 +686,7 @@
                 <div class="card">
                     <div class="card-title">😴 Сон сегодня</div>
                     <div class="sleep-widget">
-                        <div class="sleep-display">
-                            <span class="sleep-hours" id="sleepHours">7</span>
-                            <span class="sleep-unit">часов</span>
-                        </div>
+                        <div class="sleep-display"><span class="sleep-hours" id="sleepHours">7</span><span class="sleep-unit">часов</span></div>
                         <input type="range" class="sleep-slider" id="sleepSlider" min="0" max="12" step="0.5" value="7" oninput="updateSleepDisplay()">
                         <div class="sleep-quality">
                             <button class="quality-btn" onclick="setSleepQuality('😫')">😫</button>
@@ -1767,30 +697,14 @@
                         <button class="btn btn-primary" onclick="saveSleep()" style="margin-top:20px;width:100%;">Сохранить</button>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-title">📊 Сон за неделю</div>
-                    <div class="chart-container tall"><canvas id="sleepChart"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-title">💡 Советы для сна</div>
-                    <div id="sleepTips" style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6;"></div>
-                </div>
+                <div class="card"><div class="card-title">📊 Сон за неделю</div><div class="chart-container tall"><canvas id="sleepChart"></canvas></div></div>
             </div>
 
             <!-- ANALYTICS -->
             <div id="p-analytics" class="page">
-                <div class="card">
-                    <div class="card-title">📈 Продуктивность</div>
-                    <div class="chart-container tall"><canvas id="weeklyChart"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-title">🎯 Привычки</div>
-                    <div class="chart-container"><canvas id="habitsPieChart"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-title">😊 Настроение</div>
-                    <div class="chart-container"><canvas id="moodChart"></canvas></div>
-                </div>
+                <div class="card"><div class="card-title">📈 Продуктивность</div><div class="chart-container tall"><canvas id="weeklyChart"></canvas></div></div>
+                <div class="card"><div class="card-title">🎯 Привычки</div><div class="chart-container"><canvas id="habitsPieChart"></canvas></div></div>
+                <div class="card"><div class="card-title">😊 Настроение</div><div class="chart-container"><canvas id="moodChart"></canvas></div></div>
             </div>
 
             <!-- JOURNAL -->
@@ -1811,7 +725,6 @@
                     <div style="color:var(--text-muted);margin-top:4px;" id="pEmail">email</div>
                     <div style="color:var(--warning);margin-top:8px;">Уровень <span id="pLevel">1</span></div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">🎨 Тема</div>
                     <div class="theme-grid">
@@ -1822,20 +735,10 @@
                         <div class="theme-option t-sunset" onclick="setTheme('theme-sunset')">🌅 Закат</div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">🔔 Уведомления</div>
                     <button class="btn btn-secondary" onclick="requestNotifications()" style="width:100%;">Включить уведомления</button>
-                    <div style="margin-top:12px;">
-                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-secondary);font-size:0.9rem;">
-                            <input type="checkbox" id="notifyHabits" onchange="saveNotifySettings()"> Напоминать о привычках
-                        </label>
-                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-secondary);font-size:0.9rem;margin-top:8px;">
-                            <input type="checkbox" id="notifySleep" onchange="saveNotifySettings()"> Напоминать о сне
-                        </label>
-                    </div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">💾 Данные</div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -1843,13 +746,11 @@
                         <button class="btn btn-danger btn-sm" onclick="resetData()">🗑️ Сброс</button>
                     </div>
                 </div>
-
                 <button class="btn btn-danger" onclick="signOut()" style="width:100%;">🚪 Выйти</button>
             </div>
         </main>
     </div>
 
-    <!-- Bottom Nav -->
     <nav class="bottom-nav" id="bottomNav" style="display:none;">
         <button class="bottom-nav-item active" onclick="showPage('home')"><span class="icon">🏠</span><span>Главная</span></button>
         <button class="bottom-nav-item" onclick="showPage('habits')"><span class="icon">✅</span><span>Привычки</span></button>
@@ -1861,7 +762,26 @@
     <!-- Modals -->
     <div class="modal-overlay" id="habitModal"><div class="modal"><div class="modal-handle"></div><h3>✅ Новая привычка</h3><div class="input-group"><label class="input-label">Название</label><input type="text" class="input" id="habitName" placeholder="🏃 Пробежка"></div><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('habitModal')">Отмена</button><button class="btn btn-primary" onclick="addHabit()">Добавить</button></div></div></div>
 
-    <div class="modal-overlay" id="taskModal"><div class="modal"><div class="modal-handle"></div><h3>📋 Новая задача</h3><div class="input-group"><label class="input-label">Задача</label><input type="text" class="input" id="taskName" placeholder="Что сделать?"></div><div class="input-group"><label class="input-label">Приоритет</label><select class="input" id="taskPriority"><option value="low">🟢 Низкий</option><option value="medium" selected>🟡 Средний</option><option value="high">🔴 Высокий</option></select></div><div class="input-group"><label class="input-label">🏷️ Теги</label><div class="tags-container" id="taskTagsSelect"></div></div><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('taskModal')">Отмена</button><button class="btn btn-primary" onclick="addTask()">Добавить</button></div></div></div>
+    <div class="modal-overlay" id="taskModal"><div class="modal"><div class="modal-handle"></div><h3>📋 Новая задача</h3>
+        <div class="input-group"><label class="input-label">Задача</label><input type="text" class="input" id="taskName" placeholder="Что сделать?"></div>
+        <div class="input-group"><label class="input-label">Дата</label><input type="date" class="input" id="taskDate"></div>
+        <div class="input-group"><label class="input-label">Тип планирования</label>
+            <select class="input" id="taskType">
+                <option value="day">На конкретный день</option>
+                <option value="month">Цель на месяц</option>
+                <option value="year">Цель на год</option>
+            </select>
+        </div>
+        <div class="input-group"><label class="input-label">Приоритет</label>
+            <select class="input" id="taskPriority">
+                <option value="low">🟢 Низкий</option>
+                <option value="medium" selected>🟡 Средний</option>
+                <option value="high">🔴 Высокий</option>
+            </select>
+        </div>
+        <div class="input-group"><label class="input-label">🏷️ Теги</label><div class="tags-container" id="taskTagsSelect"></div></div>
+        <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('taskModal')">Отмена</button><button class="btn btn-primary" onclick="addTask()">Добавить</button></div>
+    </div></div>
 
     <div class="modal-overlay" id="tagModal"><div class="modal"><div class="modal-handle"></div><h3>🏷️ Новый тег</h3><div class="input-group"><label class="input-label">Название</label><input type="text" class="input" id="tagName" placeholder="Работа"></div><div class="input-group"><label class="input-label">Цвет</label><div class="tag-colors" id="tagColors"></div></div><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('tagModal')">Отмена</button><button class="btn btn-primary" onclick="addTag()">Создать</button></div></div></div>
 
@@ -1869,287 +789,396 @@
 
     <script>
         // Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyD3vjzA6gnRwyzhhcevtT3j1q11ViI-Tlk",
-            authDomain: "my-productivity-a7f03.firebaseapp.com",
-            databaseURL: "https://my-productivity-a7f03-default-rtdb.firebaseio.com",
-            projectId: "my-productivity-a7f03",
-            storageBucket: "my-productivity-a7f03.firebasestorage.app",
-            messagingSenderId: "259649528488",
-            appId: "1:259649528488:web:9cbd896103f9f0a6f4589d"
-        };
+        const firebaseConfig={apiKey:"AIzaSyD3vjzA6gnRwyzhhcevtT3j1q11ViI-Tlk",authDomain:"my-productivity-a7f03.firebaseapp.com",databaseURL:"https://my-productivity-a7f03-default-rtdb.firebaseio.com",projectId:"my-productivity-a7f03",storageBucket:"my-productivity-a7f03.firebasestorage.app",messagingSenderId:"259649528488",appId:"1:259649528488:web:9cbd896103f9f0a6f4589d"};
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
+        const auth=firebase.auth(),db=firebase.database();
 
         // Data
-        let D = { habits: [], habitHistory: {}, tasks: { day: {}, week: {}, month: {} }, tags: [], goals: [], journal: [], mood: {}, water: {}, sleep: {}, focus: { total: 0, today: 0, lastDate: '', history: {} }, xp: 0, maxStreak: 0, achievements: {}, theme: '', notifications: { habits: false, sleep: false }, lastUpdated: 0 };
-        let currentUser = null;
-        let charts = {};
-        let currentTaskTab = 'day';
-        let selectedTags = [];
-        let filterTag = null;
-        let selectedTagColor = '#6366f1';
-        let sleepQuality = '😊';
-        let focusInterval = null;
-        let focusSecs = 25 * 60;
-        let focusRunning = false;
-        let focusMode = 'work';
+        let D={habits:[],habitHistory:{},tasks:[],tags:[],goals:[],journal:[],mood:{},water:{},sleep:{},focus:{total:0,today:0,lastDate:'',history:{}},xp:0,maxStreak:0,achievements:{},theme:'',lastUpdated:0};
+        let currentUser=null,charts={};
 
-        const COLORS = ['#6366f1','#8b5cf6','#ec4899','#ef4444','#f59e0b','#10b981','#06b6d4','#3b82f6'];
-        const RANKS = [{l:1,t:'🌱 Новичок'},{l:3,t:'🌿 Ученик'},{l:5,t:'🌳 Практик'},{l:8,t:'⚔️ Воин'},{l:12,t:'🛡️ Рыцарь'},{l:17,t:'👑 Мастер'},{l:25,t:'🔮 Мудрец'}];
-        const ACHIEVEMENTS = [{id:'first',i:'🎯',n:'Первый шаг',c:()=>D.habits.length>=1},{id:'s7',i:'🔥',n:'7 дней',c:()=>D.maxStreak>=7},{id:'l5',i:'🚀',n:'Уровень 5',c:()=>getLevel()>=5},{id:'p10',i:'🍅',n:'10 фокусов',c:()=>D.focus.total>=10}];
-        const QUOTES = [{t:"Маленькие шаги каждый день ведут к большим переменам.",a:"Productivity Pro"},{t:"Дисциплина — мост между целями и достижениями.",a:"Дж. Рон"},{t:"Ты упадёшь до уровня своих систем.",a:"Дж. Клир"}];
-        const SLEEP_TIPS = ["💤 Старайся ложиться в одно время","📱 Откажись от экранов за час до сна","🌡️ Оптимальная температура 18-20°C","☕ Избегай кофеин после 14:00","🧘 Попробуй медитацию перед сном"];
+        // Task Planning State
+        let taskView='day'; // day, week, month, year
+        let selectedDate=new Date();
+        let selectedTags=[],filterTag=null,selectedTagColor='#6366f1',sleepQuality='😊';
+        let focusInterval=null,focusSecs=25*60,focusRunning=false,focusMode='work';
 
-        const $ = id => document.getElementById(id);
-        const today = () => new Date().toISOString().split('T')[0];
+        const COLORS=['#6366f1','#8b5cf6','#ec4899','#ef4444','#f59e0b','#10b981','#06b6d4','#3b82f6'];
+        const RANKS=[{l:1,t:'🌱 Новичок'},{l:3,t:'🌿 Ученик'},{l:5,t:'🌳 Практик'},{l:8,t:'⚔️ Воин'},{l:12,t:'🛡️ Рыцарь'},{l:17,t:'👑 Мастер'}];
+        const ACHIEVEMENTS=[{id:'first',i:'🎯',n:'Первый шаг',c:()=>D.habits.length>=1},{id:'s7',i:'🔥',n:'7 дней',c:()=>D.maxStreak>=7},{id:'l5',i:'🚀',n:'Уровень 5',c:()=>getLevel()>=5}];
+        const QUOTES=[{t:"Маленькие шаги ведут к большим переменам.",a:"Productivity Pro"},{t:"Дисциплина — мост между целями и достижениями.",a:"Дж. Рон"}];
+        const DAYS=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+        const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+        const $=id=>document.getElementById(id);
+        const formatDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const today=()=>formatDate(new Date());
+        const parseDate=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
 
         // Auth
-        function signInWithGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert('Ошибка: ' + e.message)); }
-        function signOut() { if(confirm('Выйти?')) auth.signOut(); }
+        function signInWithGoogle(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>alert('Ошибка: '+e.message));}
+        function signOut(){if(confirm('Выйти?'))auth.signOut();}
 
-        auth.onAuthStateChanged(user => {
-            $('loading').style.display = 'none';
-            if (user) {
-                currentUser = user;
-                $('authScreen').style.display = 'none';
-                $('app').style.display = 'flex';
-                $('bottomNav').style.display = 'flex';
-                updateUserUI(user);
-                loadFromCloud();
-            } else {
-                $('authScreen').style.display = 'flex';
-                $('app').style.display = 'none';
-                $('bottomNav').style.display = 'none';
-            }
+        auth.onAuthStateChanged(user=>{
+            $('loading').style.display='none';
+            if(user){currentUser=user;$('authScreen').style.display='none';$('app').style.display='flex';$('bottomNav').style.display='flex';updateUserUI(user);loadFromCloud();}
+            else{$('authScreen').style.display='flex';$('app').style.display='none';$('bottomNav').style.display='none';}
         });
 
-        function updateUserUI(u) {
-            const photo = u.photoURL || '';
-            const name = u.displayName || 'User';
-            $('sidePhoto').src = photo;
-            $('sideName').textContent = name;
-            $('sideEmail').textContent = u.email;
-            $('mobilePhoto').src = photo;
-            $('pAvatar').innerHTML = photo ? `<img src="${photo}">` : '😎';
-            $('pName').textContent = name;
-            $('pEmail').textContent = u.email;
+        function updateUserUI(u){
+            const photo=u.photoURL||'',name=u.displayName||'User';
+            $('sidePhoto').src=photo;$('sideName').textContent=name;$('sideEmail').textContent=u.email;
+            $('mobilePhoto').src=photo;$('pAvatar').innerHTML=photo?`<img src="${photo}">`:'😎';
+            $('pName').textContent=name;$('pEmail').textContent=u.email;
         }
 
-        function loadFromCloud() {
-            db.ref('users/' + currentUser.uid).once('value').then(snap => {
-                const data = snap.val();
-                if (data) D = { ...D, ...data };
-                else { D.habits = [{id:1,name:'🏃 Спорт'},{id:2,name:'📚 Чтение'}]; D.tags = [{id:1,name:'Работа',color:'#6366f1'}]; }
-                applyTheme();
-                updateAll();
-                getWeather();
-                renderSleepTips();
+        function loadFromCloud(){
+            db.ref('users/'+currentUser.uid).once('value').then(snap=>{
+                const data=snap.val();
+                if(data)D={...D,...data};
+                else{D.habits=[{id:1,name:'🏃 Спорт'},{id:2,name:'📚 Чтение'}];D.tags=[{id:1,name:'Работа',color:'#6366f1'}];D.tasks=[];}
+                if(!Array.isArray(D.tasks))D.tasks=[];
+                applyTheme();updateAll();getWeather();
             });
-            db.ref('users/' + currentUser.uid).on('value', snap => {
-                const data = snap.val();
-                if (data && data.lastUpdated > D.lastUpdated) { D = { ...D, ...data }; updateAll(); }
-            });
+            db.ref('users/'+currentUser.uid).on('value',snap=>{const data=snap.val();if(data&&data.lastUpdated>D.lastUpdated){D={...D,...data};if(!Array.isArray(D.tasks))D.tasks=[];updateAll();}});
         }
 
-        function save() { D.lastUpdated = Date.now(); if(currentUser) db.ref('users/' + currentUser.uid).set(D); }
+        function save(){D.lastUpdated=Date.now();if(currentUser)db.ref('users/'+currentUser.uid).set(D);}
 
         // Weather
-        async function getWeather() {
-            try {
-                const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {timeout:5000}));
-                const { latitude: lat, longitude: lon } = pos.coords;
-                const resp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`);
-                const data = await resp.json();
-                const c = data.current;
-                $('weatherTemp').textContent = Math.round(c.temperature_2m) + '°';
-                $('weatherHumidity').textContent = c.relative_humidity_2m + '%';
-                $('weatherWind').textContent = Math.round(c.wind_speed_10m) + ' м/с';
-                const icons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌧️',53:'🌧️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'❄️',73:'❄️',75:'❄️',80:'🌧️',81:'🌧️',82:'🌧️',95:'⛈️'};
-                $('weatherIcon').textContent = icons[c.weather_code] || '🌤️';
-                const tips = {0:'Идеальная погода для прогулки!',1:'Хороший день для продуктивности',2:'Нормальная погода для работы',3:'Пасмурно — сфокусируйся на задачах',51:'Дождь — время для домашних дел',61:'Дождь — идеально для чтения',71:'Снег — уютный день для планирования',95:'Гроза — оставайся дома и работай'};
-                $('weatherTip').textContent = tips[c.weather_code] || 'Отличный день для достижения целей!';
-                const geo = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${lon}`);
-                const loc = await geo.json();
-                $('weatherLocation').textContent = loc.address?.city || loc.address?.town || 'Ваше местоположение';
-            } catch (e) { $('weatherLocation').textContent = 'Не удалось определить погоду'; }
+        async function getWeather(){
+            try{
+                const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
+                const{latitude:lat,longitude:lon}=pos.coords;
+                const resp=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`);
+                const data=await resp.json(),c=data.current;
+                $('weatherTemp').textContent=Math.round(c.temperature_2m)+'°';
+                $('weatherHumidity').textContent=c.relative_humidity_2m+'%';
+                $('weatherWind').textContent=Math.round(c.wind_speed_10m)+' м/с';
+                const icons={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',51:'🌧️',61:'🌧️',71:'❄️',95:'⛈️'};
+                $('weatherIcon').textContent=icons[c.weather_code]||'🌤️';
+                $('weatherTip').textContent=c.temperature_2m>20?'Отлично для прогулки!':c.temperature_2m<5?'Холодно — идеально для работы дома':'Хороший день для продуктивности';
+            }catch(e){$('weatherLocation').textContent='Погода недоступна';}
         }
 
         // Pages
-        function showPage(name) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            $('p-' + name)?.classList.add('active');
-            document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(n => n.classList.remove('active'));
-            event?.target?.closest('.nav-item, .bottom-nav-item')?.classList.add('active');
-            if (name === 'analytics') renderCharts();
-            if (name === 'sleep') renderSleepChart();
+        function showPage(name){
+            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+            $('p-'+name)?.classList.add('active');
+            document.querySelectorAll('.nav-item,.bottom-nav-item').forEach(n=>n.classList.remove('active'));
+            event?.target?.closest('.nav-item,.bottom-nav-item')?.classList.add('active');
+            if(name==='analytics')renderCharts();if(name==='sleep')renderSleepChart();if(name==='tasks')renderTasksPage();
         }
 
-        function updateAll() {
-            updateUI();
-            renderHabits();
-            renderWater();
-            renderMood();
-            renderHeatmap();
-            renderTasks();
-            renderGoals();
-            renderAchievements();
-            renderJournal();
-            renderTagFilter();
-            renderTagColors();
-            updateFocusDisplay();
-            loadNotifySettings();
+        function updateAll(){
+            updateUI();renderHabits();renderWater();renderMood();renderHeatmap();
+            renderTasksPage();renderGoals();renderAchievements();renderJournal();
+            renderTagFilter();renderTagColors();updateFocusDisplay();
         }
 
-        function updateUI() {
-            $('mobileXP').textContent = D.xp + ' XP';
-            $('sideXP').textContent = D.xp + ' XP';
-            $('sideLevel').textContent = `Уровень ${getLevel()}`;
-            $('lvlNum').textContent = getLevel();
-            const info = getXPInfo();
-            $('xpNow').textContent = info.cur;
-            $('xpNeed').textContent = info.need;
-            $('lvlBar').style.width = (info.cur / info.need * 100) + '%';
-            $('rankText').textContent = getRank();
-            $('sStreak').textContent = getStreak();
-            $('sTotal').textContent = getTotalDone();
-            $('sSleep').textContent = D.sleep[today()]?.hours ? D.sleep[today()].hours + 'ч' : '--';
-            $('sPomo').textContent = D.focus.today;
-            $('pLevel').textContent = getLevel();
-            D.maxStreak = Math.max(D.maxStreak, getStreak());
+        function updateUI(){
+            $('mobileXP').textContent=D.xp+' XP';$('sideXP').textContent=D.xp+' XP';
+            $('sideLevel').textContent=`Уровень ${getLevel()}`;$('lvlNum').textContent=getLevel();
+            const info=getXPInfo();$('xpNow').textContent=info.cur;$('xpNeed').textContent=info.need;
+            $('lvlBar').style.width=(info.cur/info.need*100)+'%';$('rankText').textContent=getRank();
+            $('sStreak').textContent=getStreak();$('sTotal').textContent=getTotalDone();
+            $('sSleep').textContent=D.sleep[today()]?.hours?D.sleep[today()].hours+'ч':'--';
+            $('sPomo').textContent=D.focus.today;$('pLevel').textContent=getLevel();
+            D.maxStreak=Math.max(D.maxStreak,getStreak());
         }
 
-        function getLevel() { let l=1,n=100,x=D.xp; while(x>=n){x-=n;l++;n=Math.floor(n*1.4);} return l; }
-        function getXPInfo() { let l=1,n=100,x=D.xp; while(x>=n){x-=n;l++;n=Math.floor(n*1.4);} return {cur:x,need:n}; }
-        function getRank() { const l=getLevel(); let r=RANKS[0].t; RANKS.forEach(x=>{if(l>=x.l)r=x.t;}); return r; }
-        function addXP(n) { D.xp+=n; celebrate('✨'); save(); updateUI(); checkAchievements(); }
-        function getStreak() { let s=0,d=new Date(); if(!D.habitHistory[today()]||!Object.values(D.habitHistory[today()]).some(v=>v))d.setDate(d.getDate()-1); while(true){const ds=d.toISOString().split('T')[0]; if(D.habitHistory[ds]&&Object.values(D.habitHistory[ds]).some(v=>v)){s++;d.setDate(d.getDate()-1);}else break;} return s; }
-        function getTotalDone() { let t=0; Object.values(D.habitHistory).forEach(day=>{t+=Object.values(day).filter(v=>v).length;}); return t; }
+        function getLevel(){let l=1,n=100,x=D.xp;while(x>=n){x-=n;l++;n=Math.floor(n*1.4);}return l;}
+        function getXPInfo(){let l=1,n=100,x=D.xp;while(x>=n){x-=n;l++;n=Math.floor(n*1.4);}return{cur:x,need:n};}
+        function getRank(){const l=getLevel();let r=RANKS[0].t;RANKS.forEach(x=>{if(l>=x.l)r=x.t;});return r;}
+        function addXP(n){D.xp+=n;celebrate('✨');save();updateUI();checkAchievements();}
+        function getStreak(){let s=0,d=new Date();if(!D.habitHistory[today()]||!Object.values(D.habitHistory[today()]).some(v=>v))d.setDate(d.getDate()-1);while(true){const ds=formatDate(d);if(D.habitHistory[ds]&&Object.values(D.habitHistory[ds]).some(v=>v)){s++;d.setDate(d.getDate()-1);}else break;}return s;}
+        function getTotalDone(){let t=0;Object.values(D.habitHistory).forEach(day=>{t+=Object.values(day).filter(v=>v).length;});return t;}
 
         // Habits
-        function renderHabits() {
-            if (!D.habitHistory[today()]) D.habitHistory[today()] = {};
-            $('habitsList').innerHTML = D.habits.length ? D.habits.map(h => {
-                const done = D.habitHistory[today()][h.id] || false;
-                const pct = getHabitPct(h.id);
-                return `<div class="habit-item ${done?'done':''}"><div class="habit-check ${done?'checked':''}" onclick="toggleHabit(${h.id})"></div><div class="habit-info"><div class="habit-name">${h.name}</div><div class="habit-streak">🔥 ${getHabitStreak(h.id)} дн.</div></div><div class="habit-pct">${pct}%</div><button class="delete-btn" onclick="deleteHabit(${h.id})">×</button></div>`;
-            }).join('') : '<p style="color:var(--text-muted);text-align:center;padding:20px;">Добавь первую привычку!</p>';
+        function renderHabits(){
+            if(!D.habitHistory[today()])D.habitHistory[today()]={};
+            $('habitsList').innerHTML=D.habits.length?D.habits.map(h=>{
+                const done=D.habitHistory[today()][h.id]||false,pct=getHabitPct(h.id);
+                return`<div class="habit-item ${done?'done':''}"><div class="habit-check ${done?'checked':''}" onclick="toggleHabit(${h.id})"></div><div class="habit-info"><div class="habit-name">${h.name}</div><div class="habit-streak">🔥 ${getHabitStreak(h.id)} дн.</div></div><div class="habit-pct">${pct}%</div><button class="delete-btn" onclick="deleteHabit(${h.id})">×</button></div>`;
+            }).join(''):'<div class="empty-state"><div class="empty-state-icon">✅</div><p>Добавь первую привычку!</p></div>';
         }
-
-        function toggleHabit(id) { if(!D.habitHistory[today()])D.habitHistory[today()]={}; const was=D.habitHistory[today()][id]; D.habitHistory[today()][id]=!was; if(!was)addXP(10);else D.xp=Math.max(0,D.xp-10); save(); updateAll(); }
-        function addHabit() { const n=$('habitName').value.trim(); if(n){D.habits.push({id:Date.now(),name:n});save();closeModal('habitModal');$('habitName').value='';updateAll();celebrate('🎯');} }
-        function deleteHabit(id) { if(confirm('Удалить?')){D.habits=D.habits.filter(h=>h.id!==id);save();renderHabits();} }
-        function getHabitStreak(id) { let s=0,d=new Date(); if(!D.habitHistory[today()]?.[id])d.setDate(d.getDate()-1); while(D.habitHistory[d.toISOString().split('T')[0]]?.[id]){s++;d.setDate(d.getDate()-1);} return s; }
-        function getHabitPct(id) { let done=0,total=0; Object.values(D.habitHistory).forEach(day=>{if(day[id]!==undefined){total++;if(day[id])done++;}}); return total?Math.round(done/total*100):0; }
+        function toggleHabit(id){if(!D.habitHistory[today()])D.habitHistory[today()]={};const was=D.habitHistory[today()][id];D.habitHistory[today()][id]=!was;if(!was)addXP(10);else D.xp=Math.max(0,D.xp-10);save();updateAll();}
+        function addHabit(){const n=$('habitName').value.trim();if(n){D.habits.push({id:Date.now(),name:n});save();closeModal('habitModal');$('habitName').value='';updateAll();celebrate('🎯');}}
+        function deleteHabit(id){if(confirm('Удалить?')){D.habits=D.habits.filter(h=>h.id!==id);save();renderHabits();}}
+        function getHabitStreak(id){let s=0,d=new Date();if(!D.habitHistory[today()]?.[id])d.setDate(d.getDate()-1);while(D.habitHistory[formatDate(d)]?.[id]){s++;d.setDate(d.getDate()-1);}return s;}
+        function getHabitPct(id){let done=0,total=0;Object.values(D.habitHistory).forEach(day=>{if(day[id]!==undefined){total++;if(day[id])done++;}});return total?Math.round(done/total*100):0;}
 
         // Water
-        function renderWater() { const c=D.water[today()]||0; $('waterCount').textContent=c; $('waterGlasses').innerHTML=Array(8).fill(0).map((_,i)=>`<div class="water-glass ${i<c?'filled':''}" onclick="setWater(${i+1})"></div>`).join(''); }
-        function addWater(n) { D.water[today()]=Math.max(0,Math.min(8,(D.water[today()]||0)+n)); if(n>0)addXP(2); save();renderWater();updateUI(); }
-        function setWater(n) { D.water[today()]=n; save();renderWater();updateUI(); }
+        function renderWater(){const c=D.water[today()]||0;$('waterCount').textContent=c;$('waterGlasses').innerHTML=Array(8).fill(0).map((_,i)=>`<div class="water-glass ${i<c?'filled':''}" onclick="setWater(${i+1})"></div>`).join('');}
+        function addWater(n){D.water[today()]=Math.max(0,Math.min(8,(D.water[today()]||0)+n));if(n>0)addXP(2);save();renderWater();updateUI();}
+        function setWater(n){D.water[today()]=n;save();renderWater();updateUI();}
+
+        // ===== IMPROVED TASK SYSTEM =====
+        function setTaskView(view){
+            taskView=view;
+            document.querySelectorAll('#p-tasks .tab').forEach(t=>t.classList.remove('active'));
+            event.target.classList.add('active');
+            selectedDate=new Date();
+            renderTasksPage();
+        }
+
+        function navigateDate(dir){
+            if(taskView==='day')selectedDate.setDate(selectedDate.getDate()+dir);
+            else if(taskView==='week')selectedDate.setDate(selectedDate.getDate()+dir*7);
+            else if(taskView==='month')selectedDate.setMonth(selectedDate.getMonth()+dir);
+            else if(taskView==='year')selectedDate.setFullYear(selectedDate.getFullYear()+dir);
+            renderTasksPage();
+        }
+
+        function goToToday(){selectedDate=new Date();renderTasksPage();}
+
+        function selectDate(dateStr){selectedDate=parseDate(dateStr);renderTasksPage();}
+
+        function renderTasksPage(){
+            renderDateNav();
+            renderQuickDates();
+            renderCalendar();
+            renderTasksList();
+        }
+
+        function renderDateNav(){
+            let title='',subtitle='';
+            const d=selectedDate,isToday=formatDate(d)===today();
+            
+            if(taskView==='day'){
+                title=isToday?'Сегодня':formatDate(d)===formatDate(new Date(Date.now()+86400000))?'Завтра':formatDate(d)===formatDate(new Date(Date.now()-86400000))?'Вчера':DAYS[d.getDay()];
+                subtitle=`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+            }else if(taskView==='week'){
+                const weekStart=new Date(d);weekStart.setDate(d.getDate()-d.getDay()+1);
+                const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
+                title='Неделя';
+                subtitle=`${weekStart.getDate()} ${MONTHS[weekStart.getMonth()].slice(0,3)} - ${weekEnd.getDate()} ${MONTHS[weekEnd.getMonth()].slice(0,3)}`;
+            }else if(taskView==='month'){
+                title=MONTHS[d.getMonth()];
+                subtitle=d.getFullYear().toString();
+            }else{
+                title=d.getFullYear().toString();
+                subtitle='Годовые цели';
+            }
+            
+            $('dateNavTitle').textContent=title;
+            $('dateNavSubtitle').textContent=subtitle;
+        }
+
+        function renderQuickDates(){
+            if(taskView!=='day'){$('quickDates').innerHTML='';return;}
+            
+            let html='';
+            for(let i=-2;i<=7;i++){
+                const d=new Date();d.setDate(d.getDate()+i);
+                const ds=formatDate(d),isActive=ds===formatDate(selectedDate);
+                let label=d.getDate().toString();
+                if(i===0)label='Сегодня';else if(i===1)label='Завтра';else if(i===-1)label='Вчера';
+                html+=`<button class="quick-date-btn ${isActive?'active':''}" onclick="selectDate('${ds}')">${label}<br><small>${DAYS[d.getDay()]}</small></button>`;
+            }
+            $('quickDates').innerHTML=html;
+        }
+
+        function renderCalendar(){
+            if(taskView!=='month'){$('calendarCard').style.display='none';return;}
+            $('calendarCard').style.display='block';
+            
+            const d=selectedDate,year=d.getFullYear(),month=d.getMonth();
+            const firstDay=new Date(year,month,1),lastDay=new Date(year,month+1,0);
+            const startDay=(firstDay.getDay()+6)%7;
+            
+            let html='';
+            ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(day=>{html+=`<div class="calendar-day-header">${day}</div>`;});
+            
+            // Previous month days
+            const prevMonth=new Date(year,month,0);
+            for(let i=startDay-1;i>=0;i--){
+                const day=prevMonth.getDate()-i;
+                html+=`<div class="calendar-day other-month">${day}</div>`;
+            }
+            
+            // Current month days
+            for(let day=1;day<=lastDay.getDate();day++){
+                const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const isToday=ds===today();
+                const isSelected=ds===formatDate(selectedDate);
+                const hasTasks=D.tasks.some(t=>t.date===ds&&!t.done);
+                html+=`<div class="calendar-day ${isToday?'today':''} ${isSelected?'selected':''} ${hasTasks?'has-tasks':''}" onclick="selectDate('${ds}')">${day}</div>`;
+            }
+            
+            // Next month days
+            const remaining=42-(startDay+lastDay.getDate());
+            for(let day=1;day<=remaining&&remaining<7;day++){
+                html+=`<div class="calendar-day other-month">${day}</div>`;
+            }
+            
+            $('calendarMini').innerHTML=html;
+        }
+
+        function getTasksForView(){
+            const d=selectedDate;
+            let tasks=D.tasks.filter(t=>{
+                if(taskView==='day')return t.date===formatDate(d)&&t.type!=='month'&&t.type!=='year';
+                if(taskView==='week'){
+                    const taskDate=parseDate(t.date);
+                    const weekStart=new Date(d);weekStart.setDate(d.getDate()-d.getDay()+1);
+                    const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
+                    return taskDate>=weekStart&&taskDate<=weekEnd&&t.type!=='month'&&t.type!=='year';
+                }
+                if(taskView==='month'){
+                    const taskDate=parseDate(t.date);
+                    return(taskDate.getMonth()===d.getMonth()&&taskDate.getFullYear()===d.getFullYear())||t.type==='month';
+                }
+                if(taskView==='year'){
+                    return t.type==='year'||parseDate(t.date).getFullYear()===d.getFullYear();
+                }
+                return false;
+            });
+            
+            if(filterTag)tasks=tasks.filter(t=>t.tags?.includes(filterTag));
+            return tasks.sort((a,b)=>{
+                if(a.done!==b.done)return a.done?1:-1;
+                const priorityOrder={high:0,medium:1,low:2};
+                return priorityOrder[a.priority]-priorityOrder[b.priority];
+            });
+        }
+
+        function renderTasksList(){
+            const tasks=getTasksForView();
+            const titles={day:'📋 Задачи на день',week:'📋 Задачи на неделю',month:'📋 Цели на месяц',year:'📋 Цели на год'};
+            $('tasksListTitle').textContent=titles[taskView];
+            
+            if(!tasks.length){
+                $('tasksList').innerHTML=`<div class="empty-state"><div class="empty-state-icon">📋</div><p>Нет задач. Добавь первую!</p></div>`;
+                return;
+            }
+            
+            $('tasksList').innerHTML=tasks.map(t=>`
+                <div class="task-item ${t.done?'done':''}">
+                    <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})"></div>
+                    <div class="task-content">
+                        <div class="task-text">${t.text}</div>
+                        <div class="task-meta">
+                            <span class="task-date">${taskView==='week'?DAYS[parseDate(t.date).getDay()]+', ':''} ${parseDate(t.date).getDate()} ${MONTHS[parseDate(t.date).getMonth()].slice(0,3)}</span>
+                            <div class="task-tags">${(t.tags||[]).map(tid=>{const tag=D.tags.find(x=>x.id===tid);return tag?`<span class="tag" style="background:${tag.color}">${tag.name}</span>`:''}).join('')}</div>
+                        </div>
+                    </div>
+                    <div class="priority-dot priority-${t.priority}"></div>
+                    <button class="delete-btn" onclick="deleteTask(${t.id})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function openTaskModal(){
+            $('taskDate').value=formatDate(selectedDate);
+            $('taskType').value=taskView==='year'?'year':taskView==='month'?'month':'day';
+            selectedTags=[];
+            renderTaskTagsSelect();
+            openModal('taskModal');
+        }
+
+        function addTask(){
+            const text=$('taskName').value.trim();
+            const date=$('taskDate').value||formatDate(selectedDate);
+            const type=$('taskType').value;
+            const priority=$('taskPriority').value;
+            
+            if(text){
+                D.tasks.push({id:Date.now(),text,date,type,priority,tags:[...selectedTags],done:false,createdAt:new Date().toISOString()});
+                save();
+                closeModal('taskModal');
+                $('taskName').value='';
+                selectedTags=[];
+                renderTasksPage();
+                celebrate('📋');
+            }
+        }
+
+        function toggleTask(id){
+            const t=D.tasks.find(x=>x.id===id);
+            if(t){t.done=!t.done;if(t.done)addXP(5);save();renderTasksPage();}
+        }
+
+        function deleteTask(id){
+            D.tasks=D.tasks.filter(x=>x.id!==id);
+            save();
+            renderTasksPage();
+        }
+
+        // Tags
+        function renderTagFilter(){
+            $('tagFilter').innerHTML=`<button class="tag-btn ${filterTag===null?'selected':''}" style="background:var(--bg-tertiary)" onclick="setFilterTag(null)">Все</button>`+D.tags.map(t=>`<button class="tag-btn ${filterTag===t.id?'selected':''}" style="background:${t.color}" onclick="setFilterTag(${t.id})">${t.name}</button>`).join('');
+        }
+        function setFilterTag(id){filterTag=id;renderTagFilter();renderTasksPage();}
+        function renderTaskTagsSelect(){$('taskTagsSelect').innerHTML=D.tags.map(t=>`<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`).join('');}
+        function toggleTaskTag(id){if(selectedTags.includes(id))selectedTags=selectedTags.filter(x=>x!==id);else selectedTags.push(id);renderTaskTagsSelect();}
+        function renderTagColors(){$('tagColors').innerHTML=COLORS.map(c=>`<div class="color-btn ${selectedTagColor===c?'selected':''}" style="background:${c}" onclick="selectedTagColor='${c}';renderTagColors();"></div>`).join('');}
+        function addTag(){const n=$('tagName').value.trim();if(n){D.tags.push({id:Date.now(),name:n,color:selectedTagColor});save();closeModal('tagModal');$('tagName').value='';renderTagFilter();}}
+
+        // Goals
+        function addGoal(){const n=$('goalName').value.trim(),t=parseInt($('goalTarget').value)||100;if(n){D.goals.push({id:Date.now(),name:n,target:t,current:0});save();closeModal('goalModal');$('goalName').value='';renderGoals();celebrate('🎯');}}
+        function updateGoal(id,d){const g=D.goals.find(x=>x.id===id);if(g){g.current=Math.max(0,Math.min(g.target,g.current+d));if(g.current===g.target)celebrate('🏆');save();renderGoals();}}
+        function deleteGoal(id){D.goals=D.goals.filter(x=>x.id!==id);save();renderGoals();}
+        function renderGoals(){$('goalsList').innerHTML=D.goals.length?D.goals.map(g=>{const p=Math.round(g.current/g.target*100);return`<div class="goal-item"><div class="goal-header"><div class="goal-title">${g.name}</div></div><div class="goal-bar"><div class="goal-fill" style="width:${p}%"></div></div><div class="goal-footer"><div class="goal-pct">${g.current}/${g.target}</div><div class="goal-btns"><button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button><button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button><button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button></div></div></div>`;}).join(''):'<div class="empty-state"><div class="empty-state-icon">🎯</div><p>Добавь цель!</p></div>';}
+
+        // Focus
+        function updateFocusDisplay(){const m=Math.floor(focusSecs/60),s=focusSecs%60;$('focusTime').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;if(D.focus.lastDate!==today()){D.focus.today=0;D.focus.lastDate=today();}$('focusToday').textContent=D.focus.today;$('focusTotal').textContent=D.focus.total;}
+        function toggleFocus(){if(focusRunning){clearInterval(focusInterval);focusRunning=false;$('focusBtn').textContent='▶ Старт';}else{focusRunning=true;$('focusBtn').textContent='⏸ Пауза';focusInterval=setInterval(()=>{focusSecs--;updateFocusDisplay();if(focusSecs<=0){clearInterval(focusInterval);focusRunning=false;focusComplete();}},1000);}}
+        function resetFocus(){clearInterval(focusInterval);focusRunning=false;focusMode='work';focusSecs=25*60;updateFocusDisplay();$('focusBtn').textContent='▶ Старт';$('focusStatus').textContent='Готов к работе';}
+        function focusComplete(){if(focusMode==='work'){D.focus.total++;D.focus.today++;if(!D.focus.history)D.focus.history={};if(!D.focus.history[today()])D.focus.history[today()]=0;D.focus.history[today()]++;addXP(25);celebrate('🍅');focusMode='break';focusSecs=5*60;$('focusStatus').textContent='☕ Перерыв!';}else{focusMode='work';focusSecs=25*60;$('focusStatus').textContent='💪 Работаем!';}save();updateFocusDisplay();updateUI();$('focusBtn').textContent='▶ Старт';}
 
         // Sleep
-        function updateSleepDisplay() { $('sleepHours').textContent = $('sleepSlider').value; }
-        function setSleepQuality(q) { sleepQuality=q; document.querySelectorAll('.quality-btn').forEach(b=>b.classList.toggle('selected',b.textContent===q)); }
-        function saveSleep() { D.sleep[today()]={hours:parseFloat($('sleepSlider').value),quality:sleepQuality}; addXP(10); save(); updateUI(); celebrate('😴'); renderSleepChart(); }
-        function renderSleepTips() { $('sleepTips').innerHTML = SLEEP_TIPS.map(t=>`<p style="margin-bottom:8px;">${t}</p>`).join(''); }
-        function renderSleepChart() {
-            const ctx=$('sleepChart')?.getContext('2d'); if(!ctx)return;
+        function updateSleepDisplay(){$('sleepHours').textContent=$('sleepSlider').value;}
+        function setSleepQuality(q){sleepQuality=q;document.querySelectorAll('.quality-btn').forEach(b=>b.classList.toggle('selected',b.textContent===q));}
+        function saveSleep(){D.sleep[today()]={hours:parseFloat($('sleepSlider').value),quality:sleepQuality};addXP(10);save();updateUI();celebrate('😴');renderSleepChart();}
+        function renderSleepChart(){
+            const ctx=$('sleepChart')?.getContext('2d');if(!ctx)return;
             const labels=[],values=[],colors=[];
-            for(let i=6;i>=0;i--){ const d=new Date();d.setDate(d.getDate()-i); const ds=d.toISOString().split('T')[0]; labels.push(d.toLocaleDateString('ru-RU',{weekday:'short'})); const s=D.sleep[ds]; values.push(s?.hours||0); colors.push(s?.hours>=7?'#10b981':s?.hours>=5?'#f59e0b':'#ef4444'); }
+            for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=formatDate(d);labels.push(DAYS[d.getDay()]);const s=D.sleep[ds];values.push(s?.hours||0);colors.push(s?.hours>=7?'#10b981':s?.hours>=5?'#f59e0b':'#ef4444');}
             if(charts.sleep)charts.sleep.destroy();
             charts.sleep=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:12,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}});
         }
 
         // Mood
-        function setMood(e) { D.mood[today()]=e; save(); renderMood(); celebrate(e); }
-        function renderMood() { document.querySelectorAll('.mood-btn').forEach(b=>b.classList.toggle('selected',b.textContent===D.mood[today()])); const dates=Object.keys(D.mood).sort().slice(-7); $('moodHist').innerHTML=dates.map(d=>`<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div></div>`).join(''); }
-
-        // Tasks
-        function switchTaskTab(t) { currentTaskTab=t; document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); renderTasks(); }
-        function getTaskKey(p) { const d=new Date(); if(p==='day')return today(); if(p==='week')return `${d.getFullYear()}-W${Math.ceil(d.getDate()/7)}`; return `${d.getFullYear()}-${d.getMonth()+1}`; }
-        function addTask() { const n=$('taskName').value.trim(),p=$('taskPriority').value; if(n){ const k=getTaskKey(currentTaskTab); if(!D.tasks[currentTaskTab][k])D.tasks[currentTaskTab][k]=[]; D.tasks[currentTaskTab][k].push({id:Date.now(),text:n,priority:p,done:false,tags:[...selectedTags]}); save();closeModal('taskModal');$('taskName').value='';selectedTags=[];renderTasks(); } }
-        function toggleTask(p,k,id) { const t=D.tasks[p][k]?.find(x=>x.id===id); if(t){t.done=!t.done;if(t.done)addXP(5);save();renderTasks();} }
-        function deleteTask(p,k,id) { D.tasks[p][k]=D.tasks[p][k].filter(x=>x.id!==id);save();renderTasks(); }
-        function renderTasks() {
-            if(currentTaskTab==='week'){renderWeekView();return;}
-            const k=getTaskKey(currentTaskTab); let tasks=D.tasks[currentTaskTab][k]||[];
-            if(filterTag)tasks=tasks.filter(t=>t.tags?.includes(filterTag));
-            $('taskContent').innerHTML=`<div class="card"><div class="card-title">📋 ${currentTaskTab==='day'?'Сегодня':'Месяц'}</div>${tasks.length?tasks.map(t=>`<div class="task-item ${t.done?'done':''}"><div class="task-check ${t.done?'checked':''}" onclick="toggleTask('${currentTaskTab}','${k}',${t.id})"></div><div class="task-content"><div class="task-text">${t.text}</div><div class="task-tags">${(t.tags||[]).map(tid=>{const tag=D.tags.find(x=>x.id===tid);return tag?`<span class="tag" style="background:${tag.color}">${tag.name}</span>`:''}).join('')}</div></div><div class="priority-dot priority-${t.priority}"></div><button class="delete-btn" onclick="deleteTask('${currentTaskTab}','${k}',${t.id})">×</button></div>`).join(''):'<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет задач</p>'}</div>`;
-        }
-        function renderWeekView() {
-            const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],d=new Date(),dow=(d.getDay()+6)%7,mon=new Date(d);mon.setDate(d.getDate()-dow);
-            let html='<div class="week-scroll">';
-            for(let i=0;i<7;i++){const date=new Date(mon);date.setDate(mon.getDate()+i);const ds=date.toISOString().split('T')[0];let tasks=D.tasks.day[ds]||[];if(filterTag)tasks=tasks.filter(t=>t.tags?.includes(filterTag));html+=`<div class="week-day-card ${ds===today()?'today':''}"><div class="week-day-header"><div class="week-day-name">${days[i]}</div><div class="week-day-date">${date.getDate()}</div></div>${tasks.slice(0,4).map(t=>`<div class="week-task ${t.done?'done':''}" onclick="toggleTask('day','${ds}',${t.id})">${t.text}</div>`).join('')}</div>`;}
-            html+='</div>';$('taskContent').innerHTML=html;
-        }
-
-        // Tags
-        function renderTagFilter() { $('tagFilter').innerHTML=`<button class="tag-btn ${filterTag===null?'selected':''}" style="background:var(--bg-tertiary)" onclick="setFilterTag(null)">Все</button>`+D.tags.map(t=>`<button class="tag-btn ${filterTag===t.id?'selected':''}" style="background:${t.color}" onclick="setFilterTag(${t.id})">${t.name}</button>`).join(''); }
-        function setFilterTag(id) { filterTag=id;renderTagFilter();renderTasks(); }
-        function renderTaskTagsSelect() { $('taskTagsSelect').innerHTML=D.tags.map(t=>`<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`).join(''); }
-        function toggleTaskTag(id) { if(selectedTags.includes(id))selectedTags=selectedTags.filter(x=>x!==id);else selectedTags.push(id);renderTaskTagsSelect(); }
-        function renderTagColors() { $('tagColors').innerHTML=COLORS.map(c=>`<div class="color-btn ${selectedTagColor===c?'selected':''}" style="background:${c}" onclick="selectedTagColor='${c}';renderTagColors();"></div>`).join(''); }
-        function addTag() { const n=$('tagName').value.trim(); if(n){D.tags.push({id:Date.now(),name:n,color:selectedTagColor});save();closeModal('tagModal');$('tagName').value='';renderTagFilter();} }
-
-        // Goals
-        function addGoal() { const n=$('goalName').value.trim(),t=parseInt($('goalTarget').value)||100; if(n){D.goals.push({id:Date.now(),name:n,target:t,current:0});save();closeModal('goalModal');$('goalName').value='';renderGoals();celebrate('🎯');} }
-        function updateGoal(id,d) { const g=D.goals.find(x=>x.id===id); if(g){g.current=Math.max(0,Math.min(g.target,g.current+d));if(g.current===g.target)celebrate('🏆');save();renderGoals();} }
-        function deleteGoal(id) { D.goals=D.goals.filter(x=>x.id!==id);save();renderGoals(); }
-        function renderGoals() { $('goalsList').innerHTML=D.goals.length?D.goals.map(g=>{const p=Math.round(g.current/g.target*100);return`<div class="goal-item"><div class="goal-header"><div class="goal-title">${g.name}</div></div><div class="goal-bar"><div class="goal-fill" style="width:${p}%"></div></div><div class="goal-footer"><div class="goal-pct">${g.current}/${g.target}</div><div class="goal-btns"><button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button><button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button><button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button></div></div></div>`;}).join(''):'<p style="color:var(--text-muted);text-align:center;padding:20px;">Добавь цель!</p>'; }
-
-        // Focus
-        function updateFocusDisplay() { const m=Math.floor(focusSecs/60),s=focusSecs%60; $('focusTime').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; if(D.focus.lastDate!==today()){D.focus.today=0;D.focus.lastDate=today();} $('focusToday').textContent=D.focus.today; $('focusTotal').textContent=D.focus.total; }
-        function toggleFocus() { if(focusRunning){clearInterval(focusInterval);focusRunning=false;$('focusBtn').textContent='▶ Старт';}else{focusRunning=true;$('focusBtn').textContent='⏸ Пауза';focusInterval=setInterval(()=>{focusSecs--;updateFocusDisplay();if(focusSecs<=0){clearInterval(focusInterval);focusRunning=false;focusComplete();}},1000);} }
-        function resetFocus() { clearInterval(focusInterval);focusRunning=false;focusMode='work';focusSecs=25*60;updateFocusDisplay();$('focusBtn').textContent='▶ Старт';$('focusStatus').textContent='Готов к работе'; }
-        function focusComplete() { if(focusMode==='work'){D.focus.total++;D.focus.today++;if(!D.focus.history)D.focus.history={};if(!D.focus.history[today()])D.focus.history[today()]=0;D.focus.history[today()]++;addXP(25);celebrate('🍅');sendNotification('🍅 Помодоро завершён!','Время для перерыва');focusMode='break';focusSecs=5*60;$('focusStatus').textContent='☕ Перерыв!';}else{focusMode='work';focusSecs=25*60;$('focusStatus').textContent='💪 Работаем!';sendNotification('💪 Перерыв окончен','Время работать!');}save();updateFocusDisplay();updateUI();$('focusBtn').textContent='▶ Старт'; }
+        function setMood(e){D.mood[today()]=e;save();renderMood();celebrate(e);}
+        function renderMood(){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.toggle('selected',b.textContent===D.mood[today()]));const dates=Object.keys(D.mood).sort().slice(-7);$('moodHist').innerHTML=dates.map(d=>`<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${parseDate(d).getDate()} ${MONTHS[parseDate(d).getMonth()].slice(0,3)}</div></div>`).join('');}
 
         // Journal
-        function addJournal() { const t=$('journalInput').value.trim(); if(t){D.journal.unshift({id:Date.now(),date:new Date().toISOString(),text:t});save();$('journalInput').value='';renderJournal();addXP(5);} }
-        function deleteJournal(id) { D.journal=D.journal.filter(x=>x.id!==id);save();renderJournal(); }
-        function renderJournal() { $('journalList').innerHTML=D.journal.slice(0,20).map(e=>`<div class="card journal-entry"><div class="journal-date">${new Date(e.date).toLocaleString('ru-RU')}</div><div class="journal-text">${e.text}</div><button class="delete-btn" onclick="deleteJournal(${e.id})" style="float:right;margin-top:8px;">×</button></div>`).join(''); }
+        function addJournal(){const t=$('journalInput').value.trim();if(t){D.journal.unshift({id:Date.now(),date:new Date().toISOString(),text:t});save();$('journalInput').value='';renderJournal();addXP(5);}}
+        function deleteJournal(id){D.journal=D.journal.filter(x=>x.id!==id);save();renderJournal();}
+        function renderJournal(){$('journalList').innerHTML=D.journal.slice(0,20).map(e=>`<div class="card journal-entry"><div class="journal-date">${new Date(e.date).toLocaleString('ru-RU')}</div><div class="journal-text">${e.text}</div><button class="delete-btn" onclick="deleteJournal(${e.id})" style="float:right;margin-top:8px;">×</button></div>`).join('');}
 
         // Achievements
-        function checkAchievements() { ACHIEVEMENTS.forEach(a=>{if(!D.achievements[a.id]&&a.c()){D.achievements[a.id]=true;celebrate('🏆');sendNotification('🏆 Достижение!',a.n);}});save();renderAchievements(); }
-        function renderAchievements() { $('achieveGrid').innerHTML=ACHIEVEMENTS.map(a=>`<div class="achieve-item ${D.achievements[a.id]?'unlocked':'locked'}"><div class="achieve-icon">${a.i}</div><div class="achieve-name">${a.n}</div></div>`).join(''); }
+        function checkAchievements(){ACHIEVEMENTS.forEach(a=>{if(!D.achievements[a.id]&&a.c()){D.achievements[a.id]=true;celebrate('🏆');}});save();renderAchievements();}
+        function renderAchievements(){$('achieveGrid').innerHTML=ACHIEVEMENTS.map(a=>`<div class="achieve-item ${D.achievements[a.id]?'unlocked':'locked'}"><div class="achieve-icon">${a.i}</div><div class="achieve-name">${a.n}</div></div>`).join('');}
 
         // Heatmap
-        function renderHeatmap() { let html=''; for(let i=59;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];let l=0;if(D.habitHistory[ds]){const done=Object.values(D.habitHistory[ds]).filter(v=>v).length,total=D.habits.length||1,p=done/total;if(p>0)l=1;if(p>=0.5)l=2;if(p>=0.75)l=3;if(p>=1)l=4;}html+=`<div class="heat-day l${l}"></div>`;}$('heatmap').innerHTML=html; }
+        function renderHeatmap(){let html='';for(let i=59;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=formatDate(d);let l=0;if(D.habitHistory[ds]){const done=Object.values(D.habitHistory[ds]).filter(v=>v).length,total=D.habits.length||1,p=done/total;if(p>0)l=1;if(p>=0.5)l=2;if(p>=0.75)l=3;if(p>=1)l=4;}html+=`<div class="heat-day l${l}"></div>`;}$('heatmap').innerHTML=html;}
 
         // Charts
-        function renderCharts() {
-            // Weekly
-            const ctx1=$('weeklyChart')?.getContext('2d'); if(ctx1){if(charts.weekly)charts.weekly.destroy(); const labels=[],values=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString('ru-RU',{weekday:'short'}));const ds=d.toISOString().split('T')[0];values.push(D.habitHistory[ds]?Object.values(D.habitHistory[ds]).filter(v=>v).length:0);} charts.weekly=new Chart(ctx1,{type:'line',data:{labels,datasets:[{data:values,borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.2)',fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}}); }
-            // Habits Pie
-            const ctx2=$('habitsPieChart')?.getContext('2d'); if(ctx2){if(charts.pie)charts.pie.destroy(); charts.pie=new Chart(ctx2,{type:'doughnut',data:{labels:D.habits.map(h=>h.name.slice(0,12)),datasets:[{data:D.habits.map(h=>getHabitPct(h.id)),backgroundColor:COLORS}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#888'}}}}}); }
-            // Mood
-            const ctx3=$('moodChart')?.getContext('2d'); if(ctx3){if(charts.mood)charts.mood.destroy(); const moodNum={'😢':1,'😕':2,'😐':3,'🙂':4,'😄':5},labels=[],values=[]; for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];labels.push(d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}));values.push(moodNum[D.mood[ds]]||null);} charts.mood=new Chart(ctx3,{type:'line',data:{labels,datasets:[{data:values,borderColor:'#ec4899',backgroundColor:'rgba(236,72,153,0.2)',fill:true,tension:0.4,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:1,max:5,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888',maxRotation:45},grid:{display:false}}}}}); }
-            // Focus
-            const ctx4=$('focusChart')?.getContext('2d'); if(ctx4){if(charts.focus)charts.focus.destroy(); const labels=[],values=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString('ru-RU',{weekday:'short'}));const ds=d.toISOString().split('T')[0];values.push(D.focus.history?.[ds]||0);} charts.focus=new Chart(ctx4,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:'#ef4444',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}}); }
-            // Habits bar
-            const ctx5=$('habitsChart')?.getContext('2d'); if(ctx5){if(charts.habits)charts.habits.destroy(); charts.habits=new Chart(ctx5,{type:'bar',data:{labels:D.habits.map(h=>h.name.slice(0,10)),datasets:[{data:D.habits.map(h=>getHabitPct(h.id)),backgroundColor:COLORS,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}}); }
+        function renderCharts(){
+            const ctx1=$('weeklyChart')?.getContext('2d');if(ctx1){if(charts.weekly)charts.weekly.destroy();const labels=[],values=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(DAYS[d.getDay()]);const ds=formatDate(d);values.push(D.habitHistory[ds]?Object.values(D.habitHistory[ds]).filter(v=>v).length:0);}charts.weekly=new Chart(ctx1,{type:'line',data:{labels,datasets:[{data:values,borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.2)',fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}});}
+            const ctx2=$('habitsPieChart')?.getContext('2d');if(ctx2){if(charts.pie)charts.pie.destroy();charts.pie=new Chart(ctx2,{type:'doughnut',data:{labels:D.habits.map(h=>h.name.slice(0,12)),datasets:[{data:D.habits.map(h=>getHabitPct(h.id)),backgroundColor:COLORS}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#888'}}}}});}
+            const ctx3=$('moodChart')?.getContext('2d');if(ctx3){if(charts.mood)charts.mood.destroy();const moodNum={'😢':1,'😕':2,'😐':3,'🙂':4,'😄':5},labels=[],values=[];for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=formatDate(d);labels.push(d.getDate());values.push(moodNum[D.mood[ds]]||null);}charts.mood=new Chart(ctx3,{type:'line',data:{labels,datasets:[{data:values,borderColor:'#ec4899',backgroundColor:'rgba(236,72,153,0.2)',fill:true,tension:0.4,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:1,max:5,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}});}
+            const ctx4=$('focusChart')?.getContext('2d');if(ctx4){if(charts.focus)charts.focus.destroy();const labels=[],values=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(DAYS[d.getDay()]);const ds=formatDate(d);values.push(D.focus.history?.[ds]||0);}charts.focus=new Chart(ctx4,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:'#ef4444',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}});}
+            const ctx5=$('habitsChart')?.getContext('2d');if(ctx5){if(charts.habits)charts.habits.destroy();charts.habits=new Chart(ctx5,{type:'bar',data:{labels:D.habits.map(h=>h.name.slice(0,10)),datasets:[{data:D.habits.map(h=>getHabitPct(h.id)),backgroundColor:COLORS,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#888'},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'#888'},grid:{display:false}}}}});}
         }
 
         // Theme
-        function setTheme(t) { D.theme=t; document.body.className=t; document.querySelectorAll('.theme-option').forEach(el=>el.classList.remove('selected')); event?.target?.classList.add('selected'); save(); }
-        function applyTheme() { document.body.className=D.theme||''; }
+        function setTheme(t){D.theme=t;document.body.className=t;document.querySelectorAll('.theme-option').forEach(el=>el.classList.remove('selected'));event?.target?.classList.add('selected');save();}
+        function applyTheme(){document.body.className=D.theme||'';}
 
         // Notifications
-        function requestNotifications() { if('Notification' in window){Notification.requestPermission().then(p=>{if(p==='granted'){alert('Уведомления включены!');sendNotification('🔔 Уведомления','Теперь вы будете получать напоминания');}});} }
-        function sendNotification(title,body) { if('Notification' in window && Notification.permission==='granted'){new Notification(title,{body,icon:'🚀'});} }
-        function saveNotifySettings() { D.notifications={habits:$('notifyHabits').checked,sleep:$('notifySleep').checked}; save(); }
-        function loadNotifySettings() { $('notifyHabits').checked=D.notifications?.habits||false; $('notifySleep').checked=D.notifications?.sleep||false; }
-        // Schedule notifications
-        setInterval(()=>{ const h=new Date().getHours(); if(D.notifications?.habits && h===9){sendNotification('✅ Привычки','Не забудь выполнить привычки!');} if(D.notifications?.sleep && h===22){sendNotification('😴 Время спать','Пора готовиться ко сну');} },3600000);
+        function requestNotifications(){if('Notification'in window){Notification.requestPermission().then(p=>{if(p==='granted')alert('Уведомления включены!');});}}
 
         // Utils
-        function newQuote() { const q=QUOTES[Math.floor(Math.random()*QUOTES.length)]; $('qText').textContent=`"${q.t}"`; $('qAuthor').textContent=`— ${q.a}`; }
-        function openModal(id) { $(id).classList.add('active'); if(id==='taskModal')renderTaskTagsSelect(); }
-        function closeModal(id) { $(id).classList.remove('active'); }
+        function newQuote(){const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];$('qText').textContent=`"${q.t}"`;$('qAuthor').textContent=`— ${q.a}`;}
+        function openModal(id){$(id).classList.add('active');}
+        function closeModal(id){$(id).classList.remove('active');}
         document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active');});});
-        function celebrate(emoji) { const el=document.createElement('div');el.className='celebrate';el.textContent=emoji;document.body.appendChild(el);setTimeout(()=>el.remove(),800); }
-        function exportData() { const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='productivity-backup.json';a.click(); }
-        function resetData() { if(confirm('Удалить ВСЕ данные?')){D={habits:[],habitHistory:{},tasks:{day:{},week:{},month:{}},tags:[],goals:[],journal:[],mood:{},water:{},sleep:{},focus:{total:0,today:0,lastDate:'',history:{}},xp:0,maxStreak:0,achievements:{},theme:'',notifications:{},lastUpdated:0};save();location.reload();} }
+        function celebrate(emoji){const el=document.createElement('div');el.className='celebrate';el.textContent=emoji;document.body.appendChild(el);setTimeout(()=>el.remove(),800);}
+        function exportData(){const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='productivity-backup.json';a.click();}
+        function resetData(){if(confirm('Удалить ВСЕ данные?')){D={habits:[],habitHistory:{},tasks:[],tags:[],goals:[],journal:[],mood:{},water:{},sleep:{},focus:{total:0,today:0,lastDate:'',history:{}},xp:0,maxStreak:0,achievements:{},theme:'',lastUpdated:0};save();location.reload();}}
     </script>
 </body>
 </html>
