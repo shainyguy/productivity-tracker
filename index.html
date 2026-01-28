@@ -21,7 +21,7 @@
             --accent: #00d4ff; --accent2: #7b2cbf;
             --success: #00ff88; --warning: #ffd700; --danger: #ff4757;
             --text: #fff; --muted: #888; --card: rgba(255,255,255,0.05);
-            --radius: 16px; --sidebar: 260px;
+            --radius: 16px; --sidebar-width: 260px;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -65,13 +65,8 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
-        .google-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(0,0,0,0.4); }
+        .google-btn:hover { transform: scale(1.05); }
         .google-btn img { width: 24px; height: 24px; }
-
-        .auth-features { margin-top: 50px; display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
-        .auth-feature { text-align: center; }
-        .auth-feature-icon { font-size: 2em; margin-bottom: 8px; }
-        .auth-feature-text { font-size: 0.9em; color: var(--muted); }
 
         /* === SYNC INDICATOR === */
         .sync-indicator {
@@ -86,33 +81,27 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
         }
 
+        .sync-indicator.show { opacity: 1; }
         .sync-indicator.synced { background: rgba(0,255,136,0.2); color: var(--success); }
-        .sync-indicator.syncing { background: rgba(0,212,255,0.2); color: var(--accent); }
-        .sync-indicator.offline { background: rgba(255,71,87,0.2); color: var(--danger); }
+        .sync-indicator.syncing { background: rgba(0,212,255,0.2); color: var(--accent); opacity: 1; }
+        .sync-indicator.offline { background: rgba(255,71,87,0.2); color: var(--danger); opacity: 1; }
 
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
         .sync-indicator.syncing .sync-dot { animation: pulse 1s infinite; }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         /* === LAYOUT === */
         .app { display: none; min-height: 100vh; }
-        .app.active { display: flex; }
+        .app.active { display: block; }
 
-        /* === SIDEBAR (Desktop) === */
+        /* === SIDEBAR (Desktop Only) === */
         .sidebar {
-            width: var(--sidebar);
+            width: var(--sidebar-width);
             background: rgba(0,0,0,0.4);
             backdrop-filter: blur(20px);
             padding: 20px;
@@ -144,60 +133,56 @@
             margin-bottom: 20px;
         }
 
-        .sidebar-user img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
+        .sidebar-user img { width: 40px; height: 40px; border-radius: 50%; }
         .sidebar-user-info { flex: 1; min-width: 0; }
         .sidebar-user-name { font-weight: 600; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sidebar-user-email { font-size: 0.75em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .sidebar-nav { flex: 1; }
+        .sidebar-nav { flex: 1; overflow-y: auto; }
 
         .nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
+            padding: 12px 16px;
             color: var(--muted);
             text-decoration: none;
             border-radius: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
             background: none;
             width: 100%;
-            font-size: 1em;
+            font-size: 0.95em;
             text-align: left;
         }
 
         .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text); }
         .nav-link.active { background: rgba(0,212,255,0.15); color: var(--accent); }
-        .nav-link .icon { font-size: 1.3em; }
+        .nav-link .icon { font-size: 1.2em; width: 24px; text-align: center; }
 
         .sidebar-footer {
             padding: 15px;
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
             text-align: center;
+            margin-top: 10px;
         }
 
-        .sidebar-xp { font-size: 1.5em; font-weight: bold; color: var(--accent); }
-        .sidebar-level { color: var(--muted); font-size: 0.9em; }
+        .sidebar-xp { font-size: 1.4em; font-weight: bold; color: var(--accent); }
+        .sidebar-level { color: var(--muted); font-size: 0.85em; }
 
         .logout-btn {
             width: 100%;
-            margin-top: 15px;
-            padding: 12px;
+            margin-top: 12px;
+            padding: 10px;
             background: rgba(255,71,87,0.2);
             border: none;
             border-radius: 10px;
             color: var(--danger);
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
         /* === MOBILE HEADER === */
@@ -215,23 +200,11 @@
         }
 
         .m-logo { font-size: 1.2em; font-weight: bold; background: linear-gradient(45deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .m-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .m-user img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
+        .m-user { display: flex; align-items: center; gap: 10px; }
+        .m-user img { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
         .m-xp { background: linear-gradient(45deg, var(--accent), var(--accent2)); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: bold; }
 
-        /* === BOTTOM NAV (Mobile) === */
+        /* === BOTTOM NAV (Mobile Only) === */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -251,8 +224,8 @@
             align-items: center;
             gap: 3px;
             color: var(--muted);
-            font-size: 0.7em;
-            padding: 8px;
+            font-size: 0.65em;
+            padding: 8px 10px;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
@@ -261,12 +234,11 @@
         }
 
         .bnav-item.active { color: var(--accent); }
-        .bnav-item .icon { font-size: 1.8em; }
+        .bnav-item .icon { font-size: 1.6em; }
 
         /* === MAIN CONTENT === */
         .main {
-            flex: 1;
-            padding: 70px 15px 80px;
+            padding: 70px 15px 85px;
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
@@ -291,22 +263,23 @@
 
         /* === GRIDS === */
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
         /* === STATS === */
         .stat-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; text-align: center; }
-        .stat-icon { font-size: 1.5em; margin-bottom: 5px; }
-        .stat-value { font-size: 1.4em; font-weight: bold; color: var(--accent); }
-        .stat-label { font-size: 0.75em; color: var(--muted); }
+        .stat-icon { font-size: 1.4em; margin-bottom: 5px; }
+        .stat-value { font-size: 1.3em; font-weight: bold; color: var(--accent); }
+        .stat-label { font-size: 0.7em; color: var(--muted); }
 
         /* === LEVEL === */
         .level-card { background: linear-gradient(135deg, rgba(123,44,191,0.2), rgba(0,212,255,0.2)); }
-        .level-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .level-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95em; }
         .level-badge { font-weight: bold; }
         .xp-text { color: var(--warning); }
         .progress-bar { height: 12px; background: rgba(0,0,0,0.3); border-radius: 6px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s; }
-        .rank { text-align: center; margin-top: 8px; color: var(--warning); font-size: 0.9em; }
+        .rank { text-align: center; margin-top: 8px; color: var(--warning); font-size: 0.85em; }
 
         /* === BUTTONS === */
         .btn {
@@ -382,17 +355,17 @@
             flex-shrink: 0;
         }
         .habit-check.checked { background: var(--success); border-color: var(--success); }
-        .habit-check.checked::after { content: '✓'; color: #000; font-weight: bold; }
+        .habit-check.checked::after { content: '✓'; color: #000; font-weight: bold; font-size: 0.9em; }
 
         .habit-info { flex: 1; min-width: 0; }
         .habit-name { font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .habit-streak { font-size: 0.8em; color: var(--warning); }
+        .habit-streak { font-size: 0.75em; color: var(--warning); }
 
         .habit-pct {
             background: rgba(0,212,255,0.2);
             padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: var(--accent);
             font-weight: bold;
         }
@@ -438,8 +411,7 @@
         .task-content { flex: 1; min-width: 0; }
         .task-text { font-size: 0.95em; margin-bottom: 6px; }
         .task-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-
-        .tag { padding: 3px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 500; }
+        .tag { padding: 3px 10px; border-radius: 20px; font-size: 0.7em; font-weight: 500; }
         .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
         .priority-high { background: var(--danger); }
         .priority-medium { background: var(--warning); }
@@ -447,17 +419,8 @@
 
         /* === TAGS === */
         .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-
-        .tag-btn {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s;
-        }
+        .tag-btn { padding: 6px 14px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-size: 0.85em; transition: all 0.2s; }
         .tag-btn.selected { border-color: #fff; }
-
         .tag-colors { display: flex; gap: 8px; flex-wrap: wrap; }
         .color-btn { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
         .color-btn.selected { border-color: #fff; }
@@ -468,33 +431,91 @@
         .tab.active { background: var(--accent); color: #000; }
 
         /* === CHARTS === */
-        .chart-container { position: relative; height: 200px; margin-top: 15px; }
-        .chart-container.tall { height: 280px; }
+        .chart-container { position: relative; height: 180px; margin-top: 15px; }
+        .chart-container.tall { height: 250px; }
 
-        /* === WEEK VIEW === */
-        .week-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
-        .week-day-card { flex-shrink: 0; width: 110px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; }
-        .week-day-card.today { border: 2px solid var(--accent); }
-        .week-day-header { text-align: center; margin-bottom: 10px; }
-        .week-day-name { color: var(--accent); font-weight: 600; font-size: 0.9em; }
-        .week-day-date { font-size: 0.8em; color: var(--muted); }
-        .week-task { font-size: 0.75em; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .week-task.done { text-decoration: line-through; opacity: 0.5; }
+        /* === SLEEP TRACKER === */
+        .sleep-card { background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2)); }
+        
+        .sleep-input-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .sleep-time-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .sleep-time-input label {
+            font-size: 0.8em;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .sleep-time-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .sleep-duration {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .sleep-hours {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sleep-quality {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quality-btn {
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .quality-btn.selected { border-color: var(--accent); background: rgba(0,212,255,0.2); }
+        .quality-btn:hover { background: rgba(255,255,255,0.15); }
 
         /* === GOALS === */
         .goal-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; margin-bottom: 10px; }
         .goal-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .goal-title { font-weight: 600; }
-        .goal-deadline { font-size: 0.8em; color: var(--muted); }
+        .goal-title { font-weight: 600; font-size: 0.95em; }
+        .goal-deadline { font-size: 0.75em; color: var(--muted); }
         .goal-bar { height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden; margin: 10px 0; }
         .goal-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); }
         .goal-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .goal-pct { color: var(--accent); font-weight: bold; font-size: 0.9em; }
+        .goal-pct { color: var(--accent); font-weight: bold; font-size: 0.85em; }
         .goal-btns { display: flex; gap: 8px; }
 
         /* === HEATMAP === */
         .heatmap { display: flex; flex-wrap: wrap; gap: 3px; }
-        .heat-day { width: 12px; height: 12px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+        .heat-day { width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.1); }
         .heat-day.l1 { background: rgba(0,212,255,0.3); }
         .heat-day.l2 { background: rgba(0,212,255,0.5); }
         .heat-day.l3 { background: rgba(0,212,255,0.7); }
@@ -502,62 +523,101 @@
 
         /* === MOOD === */
         .mood-btns { display: flex; justify-content: center; gap: 8px; }
-        .mood-btn { font-size: 2em; background: none; border: none; cursor: pointer; opacity: 0.5; transition: all 0.3s; padding: 8px; }
+        .mood-btn { font-size: 1.8em; background: none; border: none; cursor: pointer; opacity: 0.5; transition: all 0.3s; padding: 8px; }
         .mood-btn:active, .mood-btn.selected { opacity: 1; transform: scale(1.2); }
         .mood-history { display: flex; gap: 5px; overflow-x: auto; padding: 10px 0; }
-        .mood-day { flex-shrink: 0; text-align: center; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; }
-        .mood-day-emoji { font-size: 1.3em; }
-        .mood-day-date { font-size: 0.65em; color: var(--muted); }
+        .mood-day { flex-shrink: 0; text-align: center; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; min-width: 50px; }
+        .mood-day-emoji { font-size: 1.2em; }
+        .mood-day-date { font-size: 0.6em; color: var(--muted); }
 
         /* === ACHIEVEMENTS === */
         .achieve-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .achieve-item { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px 8px; text-align: center; border: 2px solid transparent; }
         .achieve-item.unlocked { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,140,0,0.15)); border-color: var(--warning); }
         .achieve-item.locked { opacity: 0.4; filter: grayscale(1); }
-        .achieve-icon { font-size: 1.6em; margin-bottom: 5px; }
-        .achieve-name { font-size: 0.7em; font-weight: 600; }
+        .achieve-icon { font-size: 1.5em; margin-bottom: 5px; }
+        .achieve-name { font-size: 0.65em; font-weight: 600; }
 
         /* === WATER === */
         .water-display { text-align: center; }
-        .water-count { font-size: 3em; color: var(--accent); font-weight: bold; }
+        .water-count { font-size: 2.5em; color: var(--accent); font-weight: bold; }
         .water-glasses { display: flex; justify-content: center; gap: 6px; margin: 15px 0; flex-wrap: wrap; }
-        .water-glass { width: 28px; height: 40px; border: 2px solid var(--accent); border-radius: 0 0 8px 8px; cursor: pointer; transition: all 0.2s; }
+        .water-glass { width: 26px; height: 38px; border: 2px solid var(--accent); border-radius: 0 0 8px 8px; cursor: pointer; transition: all 0.2s; }
         .water-glass.filled { background: var(--accent); }
         .water-btns { display: flex; justify-content: center; gap: 10px; }
 
         /* === FOCUS === */
         .focus-card { text-align: center; background: linear-gradient(135deg, rgba(255,71,87,0.1), rgba(255,107,107,0.1)); }
-        .focus-timer { font-size: 3.5em; font-family: monospace; font-weight: bold; background: linear-gradient(45deg, var(--accent), var(--success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0; }
-        .focus-status { color: var(--muted); margin-bottom: 20px; }
+        .focus-timer { font-size: 3em; font-family: monospace; font-weight: bold; background: linear-gradient(45deg, var(--accent), var(--success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0; }
+        .focus-status { color: var(--muted); margin-bottom: 20px; font-size: 0.95em; }
         .focus-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+        /* === NOTIFICATIONS === */
+        .notif-card { background: linear-gradient(135deg, rgba(255,159,67,0.1), rgba(255,107,107,0.1)); }
+        
+        .notif-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .notif-toggle:last-child { border-bottom: none; }
+
+        .notif-info { flex: 1; }
+        .notif-title { font-size: 0.95em; margin-bottom: 3px; }
+        .notif-desc { font-size: 0.75em; color: var(--muted); }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active { background: var(--success); }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after { left: 25px; }
 
         /* === JOURNAL === */
         .journal-entry { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; margin-bottom: 10px; }
-        .journal-date { font-size: 0.8em; color: var(--muted); margin-bottom: 8px; }
-        .journal-text { line-height: 1.5; font-size: 0.95em; }
+        .journal-date { font-size: 0.75em; color: var(--muted); margin-bottom: 8px; }
+        .journal-text { line-height: 1.5; font-size: 0.9em; }
 
         /* === PROFILE === */
-        .profile-header { text-align: center; padding: 30px 20px; }
-        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(45deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 2.5em; margin: 0 auto 15px; overflow: hidden; }
+        .profile-header { text-align: center; padding: 25px 20px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(45deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 2.2em; margin: 0 auto 15px; overflow: hidden; }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
-        .avatar-opt { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4em; cursor: pointer; border: 2px solid transparent; }
-        .avatar-opt.selected { border-color: var(--accent); }
-
         .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .theme-opt { padding: 15px 8px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 0.8em; }
+        .theme-opt { padding: 12px 8px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 0.75em; }
         .theme-opt.selected { border-color: var(--accent); }
 
         /* === QUOTE === */
-        .quote-card { background: linear-gradient(135deg, rgba(123,44,191,0.15), rgba(0,212,255,0.15)); text-align: center; cursor: pointer; }
-        .quote-text { font-style: italic; line-height: 1.5; margin-bottom: 10px; font-size: 0.95em; }
-        .quote-author { color: var(--accent); font-size: 0.85em; }
+        .quote-card { background: linear-gradient(135deg, rgba(123,44,191,0.15), rgba(0,212,255,0.15)); text-align: center; cursor: pointer; padding: 25px 20px; }
+        .quote-text { font-style: italic; line-height: 1.5; margin-bottom: 10px; font-size: 0.9em; }
+        .quote-author { color: var(--accent); font-size: 0.8em; }
 
         /* === CHALLENGE === */
         .challenge-card { background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.1)); text-align: center; }
-        .challenge-icon { font-size: 2.5em; margin-bottom: 10px; }
-        .challenge-text { font-size: 1em; margin-bottom: 15px; }
+        .challenge-icon { font-size: 2.2em; margin-bottom: 10px; }
+        .challenge-text { font-size: 0.95em; margin-bottom: 15px; }
 
         /* === MODAL === */
         .modal-overlay {
@@ -585,7 +645,7 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .modal-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 0 auto 15px; }
-        .modal h3 { margin-bottom: 15px; }
+        .modal h3 { margin-bottom: 15px; font-size: 1.1em; }
         .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
         .modal-btns .btn { flex: 1; }
 
@@ -613,20 +673,34 @@
         .theme-dark { --bg1: #0d0d0d; --bg2: #1a1a1a; --bg3: #2d2d2d; --accent: #ffffff; --accent2: #888; }
         .theme-light { --bg1: #f5f5f5; --bg2: #e8e8e8; --bg3: #ddd; --accent: #0066cc; --accent2: #0044aa; --text: #111; --muted: #666; --card: rgba(0,0,0,0.05); }
 
-        /* === DESKTOP === */
+        /* === DESKTOP STYLES === */
         @media (min-width: 900px) {
-            .mobile-header { display: none; }
-            .bottom-nav { display: none; }
-            .sidebar { display: flex; }
-            .main { margin-left: var(--sidebar); padding: 30px 40px; max-width: 1000px; }
+            .mobile-header { display: none !important; }
+            .bottom-nav { display: none !important; }
+            .sidebar { display: flex !important; }
+            
+            .main {
+                margin-left: var(--sidebar-width);
+                padding: 30px 40px;
+                max-width: 900px;
+            }
+            
             .fab { bottom: 30px; right: 40px; }
             .grid-4 { grid-template-columns: repeat(4, 1fr); }
-            .modal { border-radius: 20px; max-width: 450px; margin-bottom: 0; }
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+            
+            .modal { border-radius: 20px; max-width: 450px; }
             .modal-overlay { align-items: center; }
-            .chart-container { height: 250px; }
-            .chart-container.tall { height: 320px; }
+            
+            .chart-container { height: 220px; }
+            .chart-container.tall { height: 280px; }
+            
             .achieve-grid { grid-template-columns: repeat(4, 1fr); }
+            
             .sync-indicator { top: 20px; }
+
+            .stat-value { font-size: 1.5em; }
+            .stat-label { font-size: 0.8em; }
         }
 
         /* Scrollbar */
@@ -655,6 +729,16 @@
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Week View */
+        .week-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
+        .week-day-card { flex-shrink: 0; width: 100px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 10px; }
+        .week-day-card.today { border: 2px solid var(--accent); }
+        .week-day-header { text-align: center; margin-bottom: 8px; }
+        .week-day-name { color: var(--accent); font-weight: 600; font-size: 0.8em; }
+        .week-day-date { font-size: 0.7em; color: var(--muted); }
+        .week-task { font-size: 0.7em; padding: 4px 6px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .week-task.done { text-decoration: line-through; opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -667,39 +751,24 @@
     <div class="auth-screen" id="authScreen" style="display:none;">
         <div class="auth-logo">🚀</div>
         <h1 class="auth-title">Productivity Tracker</h1>
-        <p class="auth-subtitle">Твой персональный помощник в достижении целей</p>
+        <p class="auth-subtitle">Твой помощник в достижении целей</p>
         
         <button class="google-btn" onclick="signInWithGoogle()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             Войти через Google
         </button>
-
-        <div class="auth-features">
-            <div class="auth-feature">
-                <div class="auth-feature-icon">☁️</div>
-                <div class="auth-feature-text">Синхронизация</div>
-            </div>
-            <div class="auth-feature">
-                <div class="auth-feature-icon">📱</div>
-                <div class="auth-feature-text">Все устройства</div>
-            </div>
-            <div class="auth-feature">
-                <div class="auth-feature-icon">🔒</div>
-                <div class="auth-feature-text">Безопасность</div>
-            </div>
-        </div>
     </div>
 
     <!-- Main App -->
     <div class="app" id="app">
         <!-- Sync Indicator -->
-        <div class="sync-indicator synced" id="syncIndicator">
+        <div class="sync-indicator" id="syncIndicator">
             <div class="sync-dot"></div>
             <span id="syncText">Синхронизировано</span>
         </div>
 
         <!-- SIDEBAR (Desktop) -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">🚀 Productivity Pro</div>
             
             <div class="sidebar-user">
@@ -714,11 +783,12 @@
                 <button class="nav-link active" onclick="showPage('home')"><span class="icon">🏠</span> Главная</button>
                 <button class="nav-link" onclick="showPage('habits')"><span class="icon">✅</span> Привычки</button>
                 <button class="nav-link" onclick="showPage('tasks')"><span class="icon">📋</span> Задачи</button>
+                <button class="nav-link" onclick="showPage('sleep')"><span class="icon">😴</span> Сон</button>
                 <button class="nav-link" onclick="showPage('goals')"><span class="icon">🎯</span> Цели</button>
                 <button class="nav-link" onclick="showPage('focus')"><span class="icon">⏱️</span> Фокус</button>
                 <button class="nav-link" onclick="showPage('analytics')"><span class="icon">📊</span> Аналитика</button>
                 <button class="nav-link" onclick="showPage('journal')"><span class="icon">📝</span> Журнал</button>
-                <button class="nav-link" onclick="showPage('profile')"><span class="icon">👤</span> Профиль</button>
+                <button class="nav-link" onclick="showPage('settings')"><span class="icon">⚙️</span> Настройки</button>
             </nav>
 
             <div class="sidebar-footer">
@@ -729,11 +799,11 @@
         </aside>
 
         <!-- MOBILE HEADER -->
-        <header class="mobile-header">
+        <header class="mobile-header" id="mobileHeader">
             <div class="m-logo">🚀 Productivity</div>
             <div class="m-user">
                 <div class="m-xp" id="mobileXP">0 XP</div>
-                <img id="mUserPhoto" src="" alt="" onclick="showPage('profile')">
+                <img id="mUserPhoto" src="" alt="" onclick="showPage('settings')">
             </div>
         </header>
 
@@ -741,10 +811,10 @@
         <main class="main">
             <!-- HOME -->
             <div id="p-home" class="page active">
-                <div class="card" style="text-align:center;padding:25px;">
-                    <div style="font-size:3em;margin-bottom:10px;" id="wAvatar">😎</div>
-                    <div style="font-size:1.4em;margin-bottom:5px;" id="wName">Привет!</div>
-                    <div style="color:var(--muted);" id="wDate"></div>
+                <div class="card" style="text-align:center;padding:20px;">
+                    <div style="font-size:2.5em;margin-bottom:8px;" id="wAvatar">😎</div>
+                    <div style="font-size:1.3em;margin-bottom:5px;" id="wName">Привет!</div>
+                    <div style="color:var(--muted);font-size:0.9em;" id="wDate"></div>
                 </div>
 
                 <div class="card level-card">
@@ -759,8 +829,8 @@
                 <div class="grid-4" style="margin-bottom:15px;">
                     <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value" id="sStreak">0</div><div class="stat-label">Стрик</div></div>
                     <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="sTotal">0</div><div class="stat-label">Выполнено</div></div>
+                    <div class="stat-card"><div class="stat-icon">😴</div><div class="stat-value" id="sSleep">-</div><div class="stat-label">Сон</div></div>
                     <div class="stat-card"><div class="stat-icon">💧</div><div class="stat-value" id="sWater">0/8</div><div class="stat-label">Вода</div></div>
-                    <div class="stat-card"><div class="stat-icon">🍅</div><div class="stat-value" id="sPomo">0</div><div class="stat-label">Помодоро</div></div>
                 </div>
 
                 <div class="card challenge-card" id="challengeCard">
@@ -797,7 +867,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">✅ Привычки</div>
-                        <button class="btn btn-sm btn-primary" onclick="openModal('habitModal')">+ Добавить</button>
+                        <button class="btn btn-sm btn-primary" onclick="openModal('habitModal')">+</button>
                     </div>
                     <div id="habitsList"></div>
                 </div>
@@ -812,11 +882,6 @@
                             <button class="btn btn-sm btn-primary" onclick="addWater(1)">+ Стакан</button>
                         </div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">📊 Прогресс привычек</div>
-                    <div class="chart-container"><canvas id="habitsChart"></canvas></div>
                 </div>
             </div>
 
@@ -841,12 +906,63 @@
                 <button class="fab" onclick="openModal('taskModal')">+</button>
             </div>
 
+            <!-- SLEEP -->
+            <div id="p-sleep" class="page">
+                <div class="card sleep-card">
+                    <div class="card-title">😴 Трекер сна</div>
+                    
+                    <div class="sleep-input-row">
+                        <div class="sleep-time-input">
+                            <label>Лёг спать</label>
+                            <input type="time" id="sleepStart" value="23:00">
+                        </div>
+                        <div class="sleep-time-input">
+                            <label>Проснулся</label>
+                            <input type="time" id="sleepEnd" value="07:00">
+                        </div>
+                    </div>
+
+                    <div class="sleep-duration">
+                        <div class="sleep-hours" id="sleepDuration">8ч 0м</div>
+                        <p style="color:var(--muted);font-size:0.85em;margin-top:5px;">Длительность сна</p>
+                    </div>
+
+                    <div style="margin-top:15px;">
+                        <p style="text-align:center;color:var(--muted);font-size:0.85em;margin-bottom:10px;">Качество сна:</p>
+                        <div class="sleep-quality">
+                            <button class="quality-btn" onclick="setSleepQuality(1)">😫 Плохо</button>
+                            <button class="quality-btn" onclick="setSleepQuality(2)">😐 Норм</button>
+                            <button class="quality-btn" onclick="setSleepQuality(3)">😊 Хорошо</button>
+                            <button class="quality-btn" onclick="setSleepQuality(4)">😴 Отлично</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveSleep()" style="width:100%;margin-top:20px;">💾 Сохранить сон</button>
+                </div>
+
+                <div class="grid-3" style="margin-bottom:15px;">
+                    <div class="stat-card"><div class="stat-icon">🌙</div><div class="stat-value" id="avgSleep">-</div><div class="stat-label">Среднее</div></div>
+                    <div class="stat-card"><div class="stat-icon">⬆️</div><div class="stat-value" id="maxSleep">-</div><div class="stat-label">Макс</div></div>
+                    <div class="stat-card"><div class="stat-icon">⬇️</div><div class="stat-value" id="minSleep">-</div><div class="stat-label">Мин</div></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📊 Сон за неделю</div>
+                    <div class="chart-container"><canvas id="sleepChart"></canvas></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📈 Качество сна</div>
+                    <div class="chart-container"><canvas id="sleepQualityChart"></canvas></div>
+                </div>
+            </div>
+
             <!-- GOALS -->
             <div id="p-goals" class="page">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">🎯 Цели</div>
-                        <button class="btn btn-sm btn-primary" onclick="openModal('goalModal')">+ Добавить</button>
+                        <button class="btn btn-sm btn-primary" onclick="openModal('goalModal')">+</button>
                     </div>
                     <div id="goalsList"></div>
                 </div>
@@ -864,18 +980,18 @@
                     <div class="focus-status" id="focusStatus">Готов к работе</div>
                     <div class="focus-btns">
                         <button class="btn btn-success" id="focusStartBtn" onclick="toggleFocus()">▶ Старт</button>
-                        <button class="btn btn-secondary" onclick="resetFocus()">↺ Сброс</button>
-                        <button class="btn btn-secondary" onclick="skipFocus()">⏭ Пропустить</button>
+                        <button class="btn btn-secondary" onclick="resetFocus()">↺</button>
+                        <button class="btn btn-secondary" onclick="skipFocus()">⏭</button>
                     </div>
                 </div>
 
-                <div class="grid-2">
+                <div class="grid-2" style="margin:15px 0;">
                     <div class="stat-card"><div class="stat-icon">🍅</div><div class="stat-value" id="focusToday">0</div><div class="stat-label">Сегодня</div></div>
                     <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="focusTotal">0</div><div class="stat-label">Всего</div></div>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">⚙️ Настройки</div>
+                    <div class="card-title">⚙️ Настройки таймера</div>
                     <div class="grid-2">
                         <div class="input-group">
                             <label class="input-label">Работа (мин)</label>
@@ -887,11 +1003,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">📊 Фокус за неделю</div>
-                    <div class="chart-container"><canvas id="focusChart"></canvas></div>
-                </div>
             </div>
 
             <!-- ANALYTICS -->
@@ -899,11 +1010,6 @@
                 <div class="card">
                     <div class="card-title">📈 Продуктивность за неделю</div>
                     <div class="chart-container tall"><canvas id="weeklyChart"></canvas></div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">📊 Продуктивность за месяц</div>
-                    <div class="chart-container tall"><canvas id="monthlyChart"></canvas></div>
                 </div>
 
                 <div class="card">
@@ -917,8 +1023,8 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-title">📋 Задачи по тегам</div>
-                    <div class="chart-container"><canvas id="tagsChart"></canvas></div>
+                    <div class="card-title">🍅 Фокус за неделю</div>
+                    <div class="chart-container"><canvas id="focusChart"></canvas></div>
                 </div>
             </div>
 
@@ -932,13 +1038,54 @@
                 <div id="journalList"></div>
             </div>
 
-            <!-- PROFILE -->
-            <div id="p-profile" class="page">
+            <!-- SETTINGS -->
+            <div id="p-settings" class="page">
                 <div class="card profile-header">
                     <div class="profile-avatar" id="pAvatar"></div>
-                    <div style="font-size:1.3em;margin-bottom:5px;" id="pName">Пользователь</div>
-                    <div style="color:var(--muted);" id="pEmail">email@example.com</div>
-                    <div style="color:var(--muted);margin-top:5px;">Уровень <span id="pLevel">1</span> • <span id="pRank">Новичок</span></div>
+                    <div style="font-size:1.2em;margin-bottom:5px;" id="pName">Пользователь</div>
+                    <div style="color:var(--muted);font-size:0.85em;" id="pEmail">email@example.com</div>
+                    <div style="color:var(--muted);margin-top:5px;font-size:0.85em;">Уровень <span id="pLevel">1</span> • <span id="pRank">Новичок</span></div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="card notif-card">
+                    <div class="card-title">🔔 Уведомления</div>
+                    
+                    <div class="notif-toggle">
+                        <div class="notif-info">
+                            <div class="notif-title">Напоминания о привычках</div>
+                            <div class="notif-desc">Каждый день в 9:00 и 21:00</div>
+                        </div>
+                        <div class="toggle-switch" id="notifHabits" onclick="toggleNotif('habits')"></div>
+                    </div>
+
+                    <div class="notif-toggle">
+                        <div class="notif-info">
+                            <div class="notif-title">Напоминания пить воду</div>
+                            <div class="notif-desc">Каждые 2 часа</div>
+                        </div>
+                        <div class="toggle-switch" id="notifWater" onclick="toggleNotif('water')"></div>
+                    </div>
+
+                    <div class="notif-toggle">
+                        <div class="notif-info">
+                            <div class="notif-title">Перерывы (помодоро)</div>
+                            <div class="notif-desc">Звук при окончании таймера</div>
+                        </div>
+                        <div class="toggle-switch" id="notifFocus" onclick="toggleNotif('focus')"></div>
+                    </div>
+
+                    <div class="notif-toggle">
+                        <div class="notif-info">
+                            <div class="notif-title">Напоминание о сне</div>
+                            <div class="notif-desc">В 22:30 каждый день</div>
+                        </div>
+                        <div class="toggle-switch" id="notifSleep" onclick="toggleNotif('sleep')"></div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="requestNotificationPermission()" style="width:100%;margin-top:15px;">
+                        🔔 Разрешить уведомления
+                    </button>
                 </div>
 
                 <div class="card">
@@ -948,8 +1095,8 @@
 
                 <div class="card">
                     <div class="card-title">☁️ Синхронизация</div>
-                    <p style="color:var(--muted);font-size:0.9em;margin-bottom:15px;">Данные автоматически синхронизируются между устройствами</p>
-                    <button class="btn btn-secondary btn-sm" onclick="forceSync()">🔄 Синхронизировать сейчас</button>
+                    <p style="color:var(--muted);font-size:0.85em;margin-bottom:15px;">Данные автоматически синхронизируются</p>
+                    <button class="btn btn-secondary btn-sm" onclick="forceSync()">🔄 Синхронизировать</button>
                 </div>
 
                 <div class="card">
@@ -961,19 +1108,19 @@
                 </div>
 
                 <div class="card">
-                    <button class="btn btn-danger" onclick="signOut()" style="width:100%;">🚪 Выйти из аккаунта</button>
+                    <button class="btn btn-danger" onclick="signOut()" style="width:100%;">🚪 Выйти</button>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- BOTTOM NAV (Mobile) -->
-    <nav class="bottom-nav" id="bottomNav" style="display:none;">
+    <nav class="bottom-nav" id="bottomNav">
         <button class="bnav-item active" onclick="showPage('home')"><span class="icon">🏠</span><span>Главная</span></button>
         <button class="bnav-item" onclick="showPage('habits')"><span class="icon">✅</span><span>Привычки</span></button>
         <button class="bnav-item" onclick="showPage('tasks')"><span class="icon">📋</span><span>Задачи</span></button>
-        <button class="bnav-item" onclick="showPage('analytics')"><span class="icon">📊</span><span>Графики</span></button>
-        <button class="bnav-item" onclick="showPage('profile')"><span class="icon">👤</span><span>Профиль</span></button>
+        <button class="bnav-item" onclick="showPage('sleep')"><span class="icon">😴</span><span>Сон</span></button>
+        <button class="bnav-item" onclick="showPage('settings')"><span class="icon">⚙️</span><span>Ещё</span></button>
     </nav>
 
     <!-- MODALS -->
@@ -1034,7 +1181,7 @@
             <h3>🏷️ Новый тег</h3>
             <div class="input-group">
                 <label class="input-label">Название</label>
-                <input type="text" class="input" id="tagName" placeholder="Работа, Учёба, Спорт...">
+                <input type="text" class="input" id="tagName" placeholder="Работа, Учёба...">
             </div>
             <div class="input-group">
                 <label class="input-label">Цвет</label>
@@ -1070,6 +1217,11 @@
         </div>
     </div>
 
+    <!-- Audio for notifications -->
+    <audio id="notifSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
         // === FIREBASE CONFIG ===
         const firebaseConfig = {
@@ -1094,7 +1246,9 @@
             tags: [],
             goals: [], journal: [], mood: {},
             water: {},
+            sleep: {},
             focus: { total: 0, today: 0, lastDate: '', history: {} },
+            notifications: { habits: false, water: false, focus: true, sleep: false },
             xp: 0, maxStreak: 0, achievements: {},
             challenge: { date: '', done: false, idx: 0 },
             lastUpdated: 0
@@ -1103,8 +1257,9 @@
         let currentUser = null;
         let syncTimeout = null;
         let isOnline = navigator.onLine;
+        let sleepQuality = 3;
 
-        const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#9b59b6','#e056fd','#00d2d3','#ff9f43','#ee5a24','#10ac84'];
+        const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#9b59b6','#e056fd','#00d2d3','#ff9f43'];
         const THEMES = [
             { id: '', name: '🌙 Космос' },
             { id: 'theme-ocean', name: '🌊 Океан' },
@@ -1130,15 +1285,15 @@
             { id: 's7', i: '🔥', n: '7 дней стрик', c: () => D.maxStreak >= 7 },
             { id: 'l5', i: '🚀', n: 'Уровень 5', c: () => getLevel() >= 5 },
             { id: 'p10', i: '🍅', n: '10 помодоро', c: () => D.focus.total >= 10 },
-            { id: 'tags', i: '🏷️', n: '5 тегов', c: () => D.tags.length >= 5 }
+            { id: 'sleep7', i: '😴', n: '7 дней сна', c: () => Object.keys(D.sleep).length >= 7 }
         ];
         const CHALLENGES = [
             { t: 'Выполни 3 привычки', c: () => getTodayHabits() >= 3 },
             { t: 'Выпей 8 стаканов воды', c: () => (D.water[today()] || 0) >= 8 },
-            { t: 'Сделай 2 помодоро', c: () => D.focus.today >= 2 }
+            { t: 'Сделай 2 помодоро', c: () => D.focus.today >= 2 },
+            { t: 'Запиши сон', c: () => D.sleep[today()] !== undefined }
         ];
 
-        // Utils
         const $ = id => document.getElementById(id);
         const today = () => new Date().toISOString().split('T')[0];
 
@@ -1152,33 +1307,23 @@
         }
 
         function signOut() {
-            if (confirm('Выйти из аккаунта?')) {
-                auth.signOut();
-            }
+            if (confirm('Выйти из аккаунта?')) auth.signOut();
         }
 
         auth.onAuthStateChanged(user => {
             $('loading').style.display = 'none';
-            
             if (user) {
                 currentUser = user;
                 $('authScreen').style.display = 'none';
                 $('app').classList.add('active');
-                $('bottomNav').style.display = 'flex';
-                
-                // Update UI with user info
                 updateUserUI(user);
-                
-                // Load data from Firebase
                 loadFromCloud();
-                
-                // Enable realtime sync
                 enableRealtimeSync();
+                setupNotificationSchedule();
             } else {
                 currentUser = null;
                 $('authScreen').style.display = 'flex';
                 $('app').classList.remove('active');
-                $('bottomNav').style.display = 'none';
             }
         });
 
@@ -1186,103 +1331,59 @@
             const photo = user.photoURL || '';
             const name = user.displayName || 'Пользователь';
             const email = user.email || '';
-
-            // Sidebar
-            $('sideUserPhoto').src = photo;
-            $('sideUserName').textContent = name;
-            $('sideUserEmail').textContent = email;
-
-            // Mobile
-            $('mUserPhoto').src = photo;
-
-            // Profile
+            if ($('sideUserPhoto')) $('sideUserPhoto').src = photo;
+            if ($('sideUserName')) $('sideUserName').textContent = name;
+            if ($('sideUserEmail')) $('sideUserEmail').textContent = email;
+            if ($('mUserPhoto')) $('mUserPhoto').src = photo;
             $('pAvatar').innerHTML = photo ? `<img src="${photo}" alt="">` : '😎';
             $('pName').textContent = name;
             $('pEmail').textContent = email;
-
-            // Welcome
             $('wName').textContent = `Привет, ${name.split(' ')[0]}!`;
         }
 
         // === CLOUD SYNC ===
         function loadFromCloud() {
             if (!currentUser) return;
-            
             setSyncStatus('syncing');
-            
-            db.ref('users/' + currentUser.uid).once('value')
-                .then(snapshot => {
-                    const cloudData = snapshot.val();
-                    if (cloudData) {
-                        D = { ...D, ...cloudData };
-                    } else {
-                        // First time - create default data
-                        D.habits = [
-                            { id: 1, name: '🏃 Спорт' },
-                            { id: 2, name: '📚 Чтение' },
-                            { id: 3, name: '💧 Вода' }
-                        ];
-                        D.tags = [
-                            { id: 1, name: 'Работа', color: '#4d96ff' },
-                            { id: 2, name: 'Личное', color: '#6bcb77' },
-                            { id: 3, name: 'Учёба', color: '#9b59b6' }
-                        ];
-                        saveToCloud();
-                    }
-                    
-                    // Save locally
-                    localStorage.setItem('pt_local', JSON.stringify(D));
-                    
-                    // Update UI
-                    applyTheme();
-                    updateAll();
-                    setupChallenge();
-                    renderTagColors();
-                    
-                    setSyncStatus('synced');
-                })
-                .catch(err => {
-                    console.error('Load error:', err);
-                    // Try to load from local
-                    const local = localStorage.getItem('pt_local');
-                    if (local) {
-                        D = JSON.parse(local);
-                        updateAll();
-                    }
-                    setSyncStatus('offline');
-                });
+            db.ref('users/' + currentUser.uid).once('value').then(snapshot => {
+                const cloudData = snapshot.val();
+                if (cloudData) D = { ...D, ...cloudData };
+                else {
+                    D.habits = [{ id: 1, name: '🏃 Спорт' }, { id: 2, name: '📚 Чтение' }, { id: 3, name: '💧 Вода' }];
+                    D.tags = [{ id: 1, name: 'Работа', color: '#4d96ff' }, { id: 2, name: 'Личное', color: '#6bcb77' }];
+                    saveToCloud();
+                }
+                localStorage.setItem('pt_local', JSON.stringify(D));
+                applyTheme();
+                updateAll();
+                setupChallenge();
+                renderTagColors();
+                updateNotifToggles();
+                setSyncStatus('synced');
+            }).catch(err => {
+                console.error('Load error:', err);
+                const local = localStorage.getItem('pt_local');
+                if (local) { D = JSON.parse(local); updateAll(); }
+                setSyncStatus('offline');
+            });
         }
 
         function saveToCloud() {
             if (!currentUser) return;
-            
             D.lastUpdated = Date.now();
-            
-            // Save locally first
             localStorage.setItem('pt_local', JSON.stringify(D));
-            
-            // Debounce cloud save
             clearTimeout(syncTimeout);
             syncTimeout = setTimeout(() => {
-                if (!isOnline) {
-                    setSyncStatus('offline');
-                    return;
-                }
-                
+                if (!isOnline) { setSyncStatus('offline'); return; }
                 setSyncStatus('syncing');
-                
                 db.ref('users/' + currentUser.uid).set(D)
                     .then(() => setSyncStatus('synced'))
-                    .catch(err => {
-                        console.error('Save error:', err);
-                        setSyncStatus('offline');
-                    });
+                    .catch(() => setSyncStatus('offline'));
             }, 1000);
         }
 
         function enableRealtimeSync() {
             if (!currentUser) return;
-            
             db.ref('users/' + currentUser.uid).on('value', snapshot => {
                 const cloudData = snapshot.val();
                 if (cloudData && cloudData.lastUpdated > D.lastUpdated) {
@@ -1294,26 +1395,71 @@
             });
         }
 
-        function forceSync() {
-            loadFromCloud();
-        }
+        function forceSync() { loadFromCloud(); }
 
         function setSyncStatus(status) {
             const el = $('syncIndicator');
             const text = $('syncText');
-            
             el.className = 'sync-indicator ' + status;
-            
-            switch(status) {
-                case 'synced': text.textContent = 'Синхронизировано'; break;
-                case 'syncing': text.textContent = 'Синхронизация...'; break;
-                case 'offline': text.textContent = 'Офлайн'; break;
+            if (status === 'synced') { text.textContent = '✓ Синхронизировано'; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
+            else if (status === 'syncing') { text.textContent = 'Синхронизация...'; el.classList.add('show'); }
+            else if (status === 'offline') { text.textContent = 'Офлайн'; el.classList.add('show'); }
+        }
+
+        window.addEventListener('online', () => { isOnline = true; forceSync(); });
+        window.addEventListener('offline', () => { isOnline = false; setSyncStatus('offline'); });
+
+        // === NOTIFICATIONS ===
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) { alert('Браузер не поддерживает уведомления'); return; }
+            Notification.requestPermission().then(perm => {
+                if (perm === 'granted') { alert('✅ Уведомления включены!'); showNotification('🚀 Productivity Tracker', 'Уведомления работают!'); }
+                else alert('❌ Уведомления отклонены');
+            });
+        }
+
+        function showNotification(title, body) {
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body, icon: '🚀', badge: '🚀' });
+                try { $('notifSound').play(); } catch(e) {}
             }
         }
 
-        // Online/Offline detection
-        window.addEventListener('online', () => { isOnline = true; forceSync(); });
-        window.addEventListener('offline', () => { isOnline = false; setSyncStatus('offline'); });
+        function toggleNotif(type) {
+            D.notifications[type] = !D.notifications[type];
+            saveToCloud();
+            updateNotifToggles();
+            if (D.notifications[type] && Notification.permission !== 'granted') requestNotificationPermission();
+        }
+
+        function updateNotifToggles() {
+            ['habits', 'water', 'focus', 'sleep'].forEach(type => {
+                const el = $('notif' + type.charAt(0).toUpperCase() + type.slice(1));
+                if (el) el.classList.toggle('active', D.notifications[type]);
+            });
+        }
+
+        function setupNotificationSchedule() {
+            // Water reminder every 2 hours
+            setInterval(() => {
+                if (D.notifications.water && (D.water[today()] || 0) < 8) {
+                    showNotification('💧 Время пить воду!', 'Не забывай поддерживать водный баланс');
+                }
+            }, 2 * 60 * 60 * 1000);
+
+            // Check time for habit reminder
+            setInterval(() => {
+                const hour = new Date().getHours();
+                if (D.notifications.habits && (hour === 9 || hour === 21)) {
+                    const done = getTodayHabits();
+                    const total = D.habits.length;
+                    if (done < total) showNotification('✅ Привычки ждут!', `Выполнено ${done}/${total}`);
+                }
+                if (D.notifications.sleep && hour === 22) {
+                    showNotification('😴 Пора готовиться ко сну!', 'Хороший сон = продуктивный день');
+                }
+            }, 60 * 60 * 1000);
+        }
 
         // === PAGES ===
         let currentPage = 'home';
@@ -1330,9 +1476,9 @@
             document.querySelectorAll('.nav-link, .bnav-item').forEach(n => n.classList.remove('active'));
             event?.target?.closest('.bnav-item, .nav-link')?.classList.add('active');
             if (name === 'analytics') renderAllCharts();
+            if (name === 'sleep') { renderSleepCharts(); updateSleepStats(); }
         }
 
-        // === UI ===
         function updateAll() {
             updateUI();
             renderHabits();
@@ -1346,13 +1492,15 @@
             renderProfile();
             renderTagFilter();
             updateFocusDisplay();
+            updateSleepDuration();
+            updateSleepStats();
         }
 
         function updateUI() {
             $('wDate').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
             $('mobileXP').textContent = D.xp + ' XP';
-            $('sideXP').textContent = D.xp + ' XP';
-            $('sideLevel').textContent = `Уровень ${getLevel()} • ${getRank().replace(/[^\w\sа-яА-Я]/g,'').trim()}`;
+            if ($('sideXP')) $('sideXP').textContent = D.xp + ' XP';
+            if ($('sideLevel')) $('sideLevel').textContent = `Уровень ${getLevel()} • ${getRank().replace(/[^\w\sа-яА-Я]/g,'').trim()}`;
 
             const lvl = getLevel(), info = getXPInfo();
             $('lvlNum').textContent = lvl;
@@ -1366,7 +1514,9 @@
             $('sStreak').textContent = streak;
             $('sTotal').textContent = getTotalDone();
             $('sWater').textContent = (D.water[today()] || 0) + '/8';
-            $('sPomo').textContent = D.focus.today;
+            
+            const todaySleep = D.sleep[today()];
+            $('sSleep').textContent = todaySleep ? todaySleep.hours.toFixed(1) + 'ч' : '-';
         }
 
         // === LEVEL ===
@@ -1383,13 +1533,8 @@
                 const done = D.habitHistory[t][h.id] || false;
                 const streak = getHabitStreak(h.id);
                 const pct = getHabitPct(h.id);
-                return `<div class="habit-item ${done?'done':''}">
-                    <div class="habit-check ${done?'checked':''}" onclick="toggleHabit(${h.id})"></div>
-                    <div class="habit-info"><div class="habit-name">${h.name}</div><div class="habit-streak">🔥 ${streak} дн.</div></div>
-                    <div class="habit-pct">${pct}%</div>
-                    <button class="delete-btn" onclick="deleteHabit(${h.id})">×</button>
-                </div>`;
-            }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь привычку! 🎯</p>';
+                return `<div class="habit-item ${done?'done':''}"><div class="habit-check ${done?'checked':''}" onclick="toggleHabit(${h.id})"></div><div class="habit-info"><div class="habit-name">${h.name}</div><div class="habit-streak">🔥 ${streak} дн.</div></div><div class="habit-pct">${pct}%</div><button class="delete-btn" onclick="deleteHabit(${h.id})">×</button></div>`;
+            }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь привычку!</p>';
         }
 
         function toggleHabit(id) {
@@ -1414,34 +1559,135 @@
         function getTotalDone() { let t=0; Object.values(D.habitHistory).forEach(day=>{t+=Object.values(day).filter(v=>v).length;}); return t; }
         function getTodayHabits() { const t=today(); return D.habitHistory[t]?Object.values(D.habitHistory[t]).filter(v=>v).length:0; }
 
+        // === SLEEP ===
+        function updateSleepDuration() {
+            const start = $('sleepStart').value;
+            const end = $('sleepEnd').value;
+            if (!start || !end) return;
+            
+            let [sh, sm] = start.split(':').map(Number);
+            let [eh, em] = end.split(':').map(Number);
+            
+            let startMins = sh * 60 + sm;
+            let endMins = eh * 60 + em;
+            
+            if (endMins < startMins) endMins += 24 * 60;
+            
+            const diffMins = endMins - startMins;
+            const hours = Math.floor(diffMins / 60);
+            const mins = diffMins % 60;
+            
+            $('sleepDuration').textContent = `${hours}ч ${mins}м`;
+        }
+
+        function setSleepQuality(q) {
+            sleepQuality = q;
+            document.querySelectorAll('.quality-btn').forEach((btn, i) => {
+                btn.classList.toggle('selected', i + 1 === q);
+            });
+        }
+
+        function saveSleep() {
+            const start = $('sleepStart').value;
+            const end = $('sleepEnd').value;
+            
+            let [sh, sm] = start.split(':').map(Number);
+            let [eh, em] = end.split(':').map(Number);
+            
+            let startMins = sh * 60 + sm;
+            let endMins = eh * 60 + em;
+            if (endMins < startMins) endMins += 24 * 60;
+            
+            const hours = (endMins - startMins) / 60;
+            
+            D.sleep[today()] = {
+                start, end, hours, quality: sleepQuality,
+                date: today()
+            };
+            
+            addXP(15);
+            saveToCloud();
+            updateAll();
+            renderSleepCharts();
+            celebrate('😴');
+        }
+
+        function updateSleepStats() {
+            const sleepData = Object.values(D.sleep).filter(s => s.hours);
+            if (!sleepData.length) {
+                $('avgSleep').textContent = '-';
+                $('maxSleep').textContent = '-';
+                $('minSleep').textContent = '-';
+                return;
+            }
+            
+            const hours = sleepData.map(s => s.hours);
+            const avg = hours.reduce((a, b) => a + b, 0) / hours.length;
+            const max = Math.max(...hours);
+            const min = Math.min(...hours);
+            
+            $('avgSleep').textContent = avg.toFixed(1) + 'ч';
+            $('maxSleep').textContent = max.toFixed(1) + 'ч';
+            $('minSleep').textContent = min.toFixed(1) + 'ч';
+        }
+
+        function renderSleepCharts() {
+            // Sleep duration chart
+            const ctx1 = $('sleepChart')?.getContext('2d');
+            if (ctx1) {
+                if (charts.sleep) charts.sleep.destroy();
+                const labels = [], values = [], colors = [];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(); d.setDate(d.getDate() - i);
+                    const ds = d.toISOString().split('T')[0];
+                    labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' }));
+                    const sleep = D.sleep[ds];
+                    values.push(sleep ? sleep.hours : 0);
+                    colors.push(sleep ? (sleep.hours >= 7 ? '#00ff88' : sleep.hours >= 5 ? '#ffd700' : '#ff6b6b') : 'rgba(255,255,255,0.1)');
+                }
+                charts.sleep = new Chart(ctx1, {
+                    type: 'bar',
+                    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 6 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 12, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } }
+                });
+            }
+
+            // Sleep quality chart
+            const ctx2 = $('sleepQualityChart')?.getContext('2d');
+            if (ctx2) {
+                if (charts.sleepQuality) charts.sleepQuality.destroy();
+                const labels = [], values = [];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(); d.setDate(d.getDate() - i);
+                    const ds = d.toISOString().split('T')[0];
+                    labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' }));
+                    const sleep = D.sleep[ds];
+                    values.push(sleep ? sleep.quality : null);
+                }
+                charts.sleepQuality = new Chart(ctx2, {
+                    type: 'line',
+                    data: { labels, datasets: [{ data: values, borderColor: '#764ba2', backgroundColor: 'rgba(118,75,162,0.2)', fill: true, tension: 0.4, spanGaps: true }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 5, ticks: { color: '#888', callback: v => ['','😫','😐','😊','😴'][v] || '' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } }
+                });
+            }
+        }
+
+        $('sleepStart')?.addEventListener('change', updateSleepDuration);
+        $('sleepEnd')?.addEventListener('change', updateSleepDuration);
+
         // === TAGS ===
-        function renderTagColors() {
-            $('tagColors').innerHTML = COLORS.map(c => `<div class="color-btn ${selectedTagColor===c?'selected':''}" style="background:${c}" onclick="selectTagColor('${c}')"></div>`).join('');
-        }
+        function renderTagColors() { $('tagColors').innerHTML = COLORS.map(c => `<div class="color-btn ${selectedTagColor===c?'selected':''}" style="background:${c}" onclick="selectTagColor('${c}')"></div>`).join(''); }
         function selectTagColor(c) { selectedTagColor = c; renderTagColors(); }
-        function addTag() {
-            const name = $('tagName').value.trim();
-            if (name) { D.tags.push({ id: Date.now(), name, color: selectedTagColor }); saveToCloud(); closeModal('tagModal'); $('tagName').value = ''; renderTagFilter(); renderTaskTagsSelect(); checkAchievements(); }
-        }
-        function renderTagFilter() {
-            $('tagFilter').innerHTML = `<button class="tag-btn ${filterTag===null?'selected':''}" style="background:rgba(255,255,255,0.1)" onclick="setFilterTag(null)">Все</button>` +
-                D.tags.map(t => `<button class="tag-btn ${filterTag===t.id?'selected':''}" style="background:${t.color}" onclick="setFilterTag(${t.id})">${t.name}</button>`).join('');
-        }
+        function addTag() { const name = $('tagName').value.trim(); if (name) { D.tags.push({ id: Date.now(), name, color: selectedTagColor }); saveToCloud(); closeModal('tagModal'); $('tagName').value = ''; renderTagFilter(); renderTaskTagsSelect(); checkAchievements(); } }
+        function renderTagFilter() { $('tagFilter').innerHTML = `<button class="tag-btn ${filterTag===null?'selected':''}" style="background:rgba(255,255,255,0.1)" onclick="setFilterTag(null)">Все</button>` + D.tags.map(t => `<button class="tag-btn ${filterTag===t.id?'selected':''}" style="background:${t.color}" onclick="setFilterTag(${t.id})">${t.name}</button>`).join(''); }
         function setFilterTag(id) { filterTag = id; renderTagFilter(); renderTasks(); }
-        function renderTaskTagsSelect() {
-            $('taskTagsSelect').innerHTML = D.tags.map(t => `<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`).join('');
-        }
+        function renderTaskTagsSelect() { $('taskTagsSelect').innerHTML = D.tags.map(t => `<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`).join(''); }
         function toggleTaskTag(id) { if (selectedTags.includes(id)) selectedTags = selectedTags.filter(x => x !== id); else selectedTags.push(id); renderTaskTagsSelect(); }
 
         // === TASKS ===
         function switchTaskTab(tab) { currentTaskTab = tab; document.querySelectorAll('#taskTabs .tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); renderTasks(); }
         function getTaskKey(period) { const d = new Date(); if (period === 'day') return today(); if (period === 'week') return `${d.getFullYear()}-W${Math.ceil((d.getDate() + new Date(d.getFullYear(), 0, 1).getDay()) / 7)}`; if (period === 'month') return `${d.getFullYear()}-${d.getMonth() + 1}`; if (period === 'year') return d.getFullYear().toString(); }
-        function addTask() {
-            const name = $('taskName').value.trim();
-            const priority = $('taskPriority').value;
-            const period = $('taskPeriod').value;
-            if (name) { const key = getTaskKey(period); if (!D.tasks[period][key]) D.tasks[period][key] = []; D.tasks[period][key].push({ id: Date.now(), text: name, priority, done: false, tags: [...selectedTags], createdAt: new Date().toISOString() }); saveToCloud(); closeModal('taskModal'); $('taskName').value = ''; selectedTags = []; renderTasks(); }
-        }
+        function addTask() { const name = $('taskName').value.trim(); const priority = $('taskPriority').value; const period = $('taskPeriod').value; if (name) { const key = getTaskKey(period); if (!D.tasks[period][key]) D.tasks[period][key] = []; D.tasks[period][key].push({ id: Date.now(), text: name, priority, done: false, tags: [...selectedTags] }); saveToCloud(); closeModal('taskModal'); $('taskName').value = ''; selectedTags = []; renderTasks(); } }
         function toggleTask(period, key, id) { const task = D.tasks[period][key]?.find(t => t.id === id); if (task) { task.done = !task.done; if (task.done) addXP(5); saveToCloud(); renderTasks(); } }
         function deleteTask(period, key, id) { D.tasks[period][key] = D.tasks[period][key].filter(t => t.id !== id); saveToCloud(); renderTasks(); }
         function renderTasks() {
@@ -1458,7 +1704,7 @@
             const d = new Date(); const dow = (d.getDay()+6)%7;
             const mon = new Date(d); mon.setDate(d.getDate() - dow);
             let html = '<div class="week-scroll">';
-            for (let i = 0; i < 7; i++) { const date = new Date(mon); date.setDate(mon.getDate() + i); const ds = date.toISOString().split('T')[0]; let tasks = D.tasks.day[ds] || []; if (filterTag !== null) tasks = tasks.filter(t => t.tags?.includes(filterTag)); html += `<div class="week-day-card ${ds===today()?'today':''}"><div class="week-day-header"><div class="week-day-name">${days[i]}</div><div class="week-day-date">${date.getDate()}</div></div>${tasks.slice(0,5).map(t => `<div class="week-task ${t.done?'done':''}" onclick="toggleTask('day','${ds}',${t.id})">${t.text}</div>`).join('')}</div>`; }
+            for (let i = 0; i < 7; i++) { const date = new Date(mon); date.setDate(mon.getDate() + i); const ds = date.toISOString().split('T')[0]; let tasks = D.tasks.day[ds] || []; if (filterTag !== null) tasks = tasks.filter(t => t.tags?.includes(filterTag)); html += `<div class="week-day-card ${ds===today()?'today':''}"><div class="week-day-header"><div class="week-day-name">${days[i]}</div><div class="week-day-date">${date.getDate()}</div></div>${tasks.slice(0,4).map(t => `<div class="week-task ${t.done?'done':''}" onclick="toggleTask('day','${ds}',${t.id})">${t.text}</div>`).join('')}</div>`; }
             html += '</div>';
             $('taskContent').innerHTML = html;
         }
@@ -1472,7 +1718,7 @@
         function addGoal() { const name = $('goalName').value.trim(); const target = parseInt($('goalTarget').value) || 100; const deadline = $('goalDeadline').value; if (name) { D.goals.push({ id: Date.now(), name, target, current: 0, deadline }); saveToCloud(); closeModal('goalModal'); $('goalName').value = ''; renderGoals(); celebrate('🎯'); } }
         function updateGoal(id, delta) { const goal = D.goals.find(g => g.id === id); if (goal) { goal.current = Math.max(0, Math.min(goal.target, goal.current + delta)); if (goal.current === goal.target) celebrate('🏆'); saveToCloud(); renderGoals(); } }
         function deleteGoal(id) { D.goals = D.goals.filter(g => g.id !== id); saveToCloud(); renderGoals(); }
-        function renderGoals() { $('goalsList').innerHTML = D.goals.length ? D.goals.map(g => { const pct = Math.round(g.current / g.target * 100); return `<div class="goal-item"><div class="goal-header"><div class="goal-title">${g.name}</div><div class="goal-deadline">${g.deadline || ''}</div></div><div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div><div class="goal-footer"><div class="goal-pct">${g.current}/${g.target}</div><div class="goal-btns"><button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button><button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button><button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button></div></div></div>`; }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь цель! 🎯</p>'; }
+        function renderGoals() { $('goalsList').innerHTML = D.goals.length ? D.goals.map(g => { const pct = Math.round(g.current / g.target * 100); return `<div class="goal-item"><div class="goal-header"><div class="goal-title">${g.name}</div><div class="goal-deadline">${g.deadline || ''}</div></div><div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div><div class="goal-footer"><div class="goal-pct">${g.current}/${g.target}</div><div class="goal-btns"><button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button><button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button><button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button></div></div></div>`; }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь цель!</p>'; }
 
         // === FOCUS ===
         let focusInterval = null, focusSecs = 25 * 60, focusRunning = false, focusMode = 'work';
@@ -1480,35 +1726,36 @@
         function toggleFocus() { if (focusRunning) { clearInterval(focusInterval); focusRunning = false; $('focusStartBtn').innerHTML = '▶ Старт'; } else { focusRunning = true; $('focusStartBtn').innerHTML = '⏸ Пауза'; focusInterval = setInterval(() => { focusSecs--; updateFocusDisplay(); if (focusSecs <= 0) { clearInterval(focusInterval); focusRunning = false; focusComplete(); } }, 1000); } }
         function resetFocus() { clearInterval(focusInterval); focusRunning = false; focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60; updateFocusDisplay(); $('focusStartBtn').innerHTML = '▶ Старт'; $('focusStatus').textContent = 'Готов к работе'; }
         function skipFocus() { clearInterval(focusInterval); focusRunning = false; focusComplete(); }
-        function focusComplete() { if (focusMode === 'work') { D.focus.total++; D.focus.today++; if (!D.focus.history) D.focus.history = {}; if (!D.focus.history[today()]) D.focus.history[today()] = 0; D.focus.history[today()]++; addXP(25); celebrate('🍅'); focusMode = 'break'; focusSecs = (parseInt($('focusBreak').value)||5)*60; $('focusStatus').textContent = '☕ Перерыв!'; } else { focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60; $('focusStatus').textContent = '💪 Время работать!'; } saveToCloud(); updateFocusDisplay(); updateUI(); $('focusStartBtn').innerHTML = '▶ Старт'; }
+        function focusComplete() {
+            if (D.notifications.focus) showNotification(focusMode === 'work' ? '🍅 Помодоро завершён!' : '☕ Перерыв окончен!', focusMode === 'work' ? 'Время отдохнуть' : 'Время работать!');
+            if (focusMode === 'work') { D.focus.total++; D.focus.today++; if (!D.focus.history) D.focus.history = {}; if (!D.focus.history[today()]) D.focus.history[today()] = 0; D.focus.history[today()]++; addXP(25); celebrate('🍅'); focusMode = 'break'; focusSecs = (parseInt($('focusBreak').value)||5)*60; $('focusStatus').textContent = '☕ Перерыв!'; }
+            else { focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60; $('focusStatus').textContent = '💪 Время работать!'; }
+            saveToCloud(); updateFocusDisplay(); updateUI(); $('focusStartBtn').innerHTML = '▶ Старт';
+        }
 
         // === MOOD ===
         function setMood(emoji) { D.mood[today()] = emoji; saveToCloud(); renderMood(); celebrate(emoji); }
-        function renderMood() { const t = today(); document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.textContent === D.mood[t])); const dates = Object.keys(D.mood).sort().slice(-10); $('moodHist').innerHTML = dates.map(d => `<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div></div>`).join(''); }
+        function renderMood() { const t = today(); document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.textContent === D.mood[t])); const dates = Object.keys(D.mood).sort().slice(-7); $('moodHist').innerHTML = dates.map(d => `<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div></div>`).join(''); }
 
         // === HEATMAP ===
-        function renderHeatmap() { let html = ''; for (let i = 59; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; let lvl = 0; if (D.habitHistory[ds]) { const done = Object.values(D.habitHistory[ds]).filter(v => v).length; const total = D.habits.length || 1; const pct = done / total; if (pct > 0) lvl = 1; if (pct >= 0.5) lvl = 2; if (pct >= 0.75) lvl = 3; if (pct >= 1) lvl = 4; } html += `<div class="heat-day l${lvl}" title="${ds}"></div>`; } $('heatmap').innerHTML = html; }
+        function renderHeatmap() { let html = ''; for (let i = 59; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; let lvl = 0; if (D.habitHistory[ds]) { const done = Object.values(D.habitHistory[ds]).filter(v => v).length; const total = D.habits.length || 1; const pct = done / total; if (pct > 0) lvl = 1; if (pct >= 0.5) lvl = 2; if (pct >= 0.75) lvl = 3; if (pct >= 1) lvl = 4; } html += `<div class="heat-day l${lvl}"></div>`; } $('heatmap').innerHTML = html; }
 
         // === ACHIEVEMENTS ===
-        function checkAchievements() { ACHIEVEMENTS.forEach(a => { if (!D.achievements[a.id] && a.c()) { D.achievements[a.id] = true; celebrate('🏆'); }}); saveToCloud(); renderAchievements(); }
+        function checkAchievements() { ACHIEVEMENTS.forEach(a => { if (!D.achievements[a.id] && a.c()) { D.achievements[a.id] = true; celebrate('🏆'); showNotification('🏆 Достижение!', a.n); }}); saveToCloud(); renderAchievements(); }
         function renderAchievements() { $('achieveGrid').innerHTML = ACHIEVEMENTS.map(a => `<div class="achieve-item ${D.achievements[a.id]?'unlocked':'locked'}"><div class="achieve-icon">${a.i}</div><div class="achieve-name">${a.n}</div></div>`).join(''); }
 
         // === JOURNAL ===
         function addJournal() { const text = $('journalInput').value.trim(); if (text) { D.journal.unshift({ id: Date.now(), date: new Date().toISOString(), text }); saveToCloud(); $('journalInput').value = ''; renderJournal(); addXP(5); }}
         function deleteJournal(id) { D.journal = D.journal.filter(e => e.id !== id); saveToCloud(); renderJournal(); }
-        function renderJournal() { $('journalList').innerHTML = D.journal.slice(0, 20).map(e => `<div class="card journal-entry"><div class="journal-date">${new Date(e.date).toLocaleString('ru-RU')}</div><div class="journal-text">${e.text}</div><button class="delete-btn" onclick="deleteJournal(${e.id})" style="float:right;margin-top:10px;">×</button></div>`).join(''); }
+        function renderJournal() { $('journalList').innerHTML = D.journal.slice(0, 15).map(e => `<div class="card journal-entry"><div class="journal-date">${new Date(e.date).toLocaleString('ru-RU')}</div><div class="journal-text">${e.text}</div><button class="delete-btn" onclick="deleteJournal(${e.id})" style="float:right;">×</button></div>`).join(''); }
 
         // === CHALLENGE ===
         function setupChallenge() { const t = today(); if (D.challenge.date !== t) { D.challenge = { date: t, done: false, idx: Math.floor(Math.random() * CHALLENGES.length) }; saveToCloud(); } renderChallenge(); }
         function renderChallenge() { const ch = CHALLENGES[D.challenge.idx]; $('challengeText').textContent = ch.t; $('challengeBtn').textContent = D.challenge.done ? '✅ Выполнено!' : 'Выполнить (+50 XP)'; $('challengeBtn').disabled = D.challenge.done; if (D.challenge.done) $('challengeCard').style.opacity = '0.6'; }
-        function completeChallenge() { const ch = CHALLENGES[D.challenge.idx]; if (ch.c() && !D.challenge.done) { D.challenge.done = true; addXP(50); saveToCloud(); renderChallenge(); celebrate('🎉'); } else if (!ch.c()) { alert('Сначала выполни задание! 😊'); }}
+        function completeChallenge() { const ch = CHALLENGES[D.challenge.idx]; if (ch.c() && !D.challenge.done) { D.challenge.done = true; addXP(50); saveToCloud(); renderChallenge(); celebrate('🎉'); } else if (!ch.c()) { alert('Сначала выполни задание!'); }}
 
         // === PROFILE ===
-        function renderProfile() {
-            $('pLevel').textContent = getLevel();
-            $('pRank').textContent = getRank().replace(/[^\w\sа-яА-Я]/g,'').trim();
-            $('themeGrid').innerHTML = THEMES.map(t => `<div class="theme-opt ${D.user.theme===t.id?'selected':''}" style="background:linear-gradient(135deg,var(--bg1),var(--bg3));" onclick="setTheme('${t.id}')">${t.name}</div>`).join('');
-        }
+        function renderProfile() { $('pLevel').textContent = getLevel(); $('pRank').textContent = getRank().replace(/[^\w\sа-яА-Я]/g,'').trim(); $('themeGrid').innerHTML = THEMES.map(t => `<div class="theme-opt ${D.user.theme===t.id?'selected':''}" onclick="setTheme('${t.id}')">${t.name}</div>`).join(''); }
         function setTheme(t) { D.user.theme = t; saveToCloud(); applyTheme(); renderProfile(); }
         function applyTheme() { document.body.className = D.user.theme; }
 
@@ -1518,25 +1765,13 @@
             const ctx1 = $('weeklyChart')?.getContext('2d');
             if (ctx1) { if (charts.weekly) charts.weekly.destroy(); const labels = [], values = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' })); const ds = d.toISOString().split('T')[0]; values.push(D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0); } charts.weekly = new Chart(ctx1, { type: 'line', data: { labels, datasets: [{ data: values, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
             
-            // Monthly
-            const ctx2 = $('monthlyChart')?.getContext('2d');
-            if (ctx2) { if (charts.monthly) charts.monthly.destroy(); const labels = [], values = []; for (let i = 29; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); labels.push(d.getDate()); const ds = d.toISOString().split('T')[0]; const done = D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0; const total = D.habits.length || 1; values.push(Math.round(done / total * 100)); } charts.monthly = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ data: values, backgroundColor: values.map(v => v >= 80 ? '#00ff88' : v >= 50 ? '#ffd700' : '#ff6b6b'), borderRadius: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 0 }, grid: { display: false } } } } }); }
-            
             // Habits Pie
             const ctx3 = $('habitsPieChart')?.getContext('2d');
-            if (ctx3) { if (charts.pie) charts.pie.destroy(); charts.pie = new Chart(ctx3, { type: 'doughnut', data: { labels: D.habits.map(h => h.name.slice(0,15)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } } }); }
+            if (ctx3 && D.habits.length) { if (charts.pie) charts.pie.destroy(); charts.pie = new Chart(ctx3, { type: 'doughnut', data: { labels: D.habits.map(h => h.name.slice(0,12)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff', boxWidth: 12, font: { size: 10 } } } } } }); }
             
             // Mood
             const ctx4 = $('moodChart')?.getContext('2d');
-            if (ctx4) { if (charts.mood) charts.mood.destroy(); const moodToNum = { '😢': 1, '😕': 2, '😐': 3, '🙂': 4, '😄': 5 }; const labels = [], values = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; labels.push(d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })); values.push(moodToNum[D.mood[ds]] || null); } charts.mood = new Chart(ctx4, { type: 'line', data: { labels, datasets: [{ data: values, borderColor: '#f472b6', backgroundColor: 'rgba(244,114,182,0.2)', fill: true, tension: 0.4, spanGaps: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 1, max: 5, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 45 }, grid: { display: false } } } } }); }
-            
-            // Tags
-            const ctx5 = $('tagsChart')?.getContext('2d');
-            if (ctx5) { if (charts.tags) charts.tags.destroy(); const tagCounts = {}; D.tags.forEach(t => tagCounts[t.id] = { name: t.name, color: t.color, count: 0 }); Object.values(D.tasks).forEach(period => { Object.values(period).forEach(tasks => { tasks.forEach(task => { (task.tags || []).forEach(tid => { if (tagCounts[tid]) tagCounts[tid].count++; }); }); }); }); const data = Object.values(tagCounts); charts.tags = new Chart(ctx5, { type: 'pie', data: { labels: data.map(d => d.name), datasets: [{ data: data.map(d => d.count), backgroundColor: data.map(d => d.color) }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } } }); }
-            
-            // Habits bar
-            const ctx6 = $('habitsChart')?.getContext('2d');
-            if (ctx6) { if (charts.habits) charts.habits.destroy(); charts.habits = new Chart(ctx6, { type: 'bar', data: { labels: D.habits.map(h => h.name.slice(0,12)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS.slice(0, D.habits.length), borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
+            if (ctx4) { if (charts.mood) charts.mood.destroy(); const moodToNum = { '😢': 1, '😕': 2, '😐': 3, '🙂': 4, '😄': 5 }; const labels = [], values = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; labels.push(d.getDate()); values.push(moodToNum[D.mood[ds]] || null); } charts.mood = new Chart(ctx4, { type: 'line', data: { labels, datasets: [{ data: values, borderColor: '#f472b6', backgroundColor: 'rgba(244,114,182,0.2)', fill: true, tension: 0.4, spanGaps: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 1, max: 5, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
             
             // Focus
             const ctx7 = $('focusChart')?.getContext('2d');
@@ -1550,7 +1785,10 @@
         document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }); });
         function celebrate(emoji) { const el = document.createElement('div'); el.className = 'celebrate'; el.textContent = emoji; document.body.appendChild(el); setTimeout(() => el.remove(), 800); }
         function exportData() { const blob = new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'productivity-backup.json'; a.click(); }
-        function resetData() { if (confirm('Удалить ВСЕ данные? Это действие нельзя отменить!')) { D = { user: { name: '', avatar: '😎', theme: '' }, habits: [], habitHistory: {}, tasks: { day: {}, week: {}, month: {}, year: {} }, tags: [], goals: [], journal: [], mood: {}, water: {}, focus: { total: 0, today: 0, lastDate: '', history: {} }, xp: 0, maxStreak: 0, achievements: {}, challenge: { date: '', done: false, idx: 0 }, lastUpdated: 0 }; saveToCloud(); location.reload(); } }
+        function resetData() { if (confirm('Удалить ВСЕ данные?')) { D = { user: { theme: '' }, habits: [], habitHistory: {}, tasks: { day: {}, week: {}, month: {}, year: {} }, tags: [], goals: [], journal: [], mood: {}, water: {}, sleep: {}, focus: { total: 0, today: 0, lastDate: '', history: {} }, notifications: { habits: false, water: false, focus: true, sleep: false }, xp: 0, maxStreak: 0, achievements: {}, challenge: {}, lastUpdated: 0 }; saveToCloud(); location.reload(); } }
+
+        // Init sleep duration calculation
+        setTimeout(updateSleepDuration, 100);
     </script>
 </body>
 </html>
