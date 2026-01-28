@@ -6,6 +6,88 @@
     <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>🚀 Productivity Tracker Pro</title>
+
+<!-- Добавь в <head> -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD3vjzA6gnRwyzhhcevtT3j1q11ViI-Tlk",
+  authDomain: "my-productivity-a7f03.firebaseapp.com",
+  databaseURL: "https://my-productivity-a7f03-default-rtdb.firebaseio.com",
+  projectId: "my-productivity-a7f03",
+  storageBucket: "my-productivity-a7f03.firebasestorage.app",
+  messagingSenderId: "259649528488",
+  appId: "1:259649528488:web:9cbd896103f9f0a6f4589d"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Уникальный ID пользователя (сохраняется в localStorage)
+function getUserId() {
+    let id = localStorage.getItem('userId');
+    if (!id) {
+        id = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('userId', id);
+    }
+    return id;
+}
+
+// Сохранение в облако
+function saveToCloud() {
+    const data = JSON.parse(localStorage.getItem('pt4') || '{}');
+    db.ref('users/' + getUserId()).set(data);
+}
+
+// Загрузка из облака
+function loadFromCloud() {
+    db.ref('users/' + getUserId()).once('value').then(snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            localStorage.setItem('pt4', JSON.stringify(data));
+            location.reload();
+        }
+    });
+}
+
+// Синхронизация в реальном времени
+function enableRealtimeSync() {
+    const userId = getUserId();
+    
+    // Слушаем изменения
+    db.ref('users/' + userId).on('value', snapshot => {
+        const cloudData = snapshot.val();
+        if (cloudData) {
+            const localData = JSON.parse(localStorage.getItem('pt4') || '{}');
+            // Если облачные данные новее
+            if (cloudData.lastUpdated > (localData.lastUpdated || 0)) {
+                localStorage.setItem('pt4', JSON.stringify(cloudData));
+                // Обновляем UI без перезагрузки
+                updateAll();
+            }
+        }
+    });
+}
+
+// Модифицируй функцию save()
+function save() {
+    D.lastUpdated = Date.now();
+    localStorage.setItem('pt4', JSON.stringify(D));
+    saveToCloud(); // Синхронизация с облаком
+}
+
+// При загрузке страницы
+enableRealtimeSync();
+</script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
