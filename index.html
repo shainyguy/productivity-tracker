@@ -6,89 +6,15 @@
     <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>🚀 Productivity Tracker Pro</title>
-
-<!-- Добавь в <head> -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-<script>
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD3vjzA6gnRwyzhhcevtT3j1q11ViI-Tlk",
-  authDomain: "my-productivity-a7f03.firebaseapp.com",
-  databaseURL: "https://my-productivity-a7f03-default-rtdb.firebaseio.com",
-  projectId: "my-productivity-a7f03",
-  storageBucket: "my-productivity-a7f03.firebasestorage.app",
-  messagingSenderId: "259649528488",
-  appId: "1:259649528488:web:9cbd896103f9f0a6f4589d"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Уникальный ID пользователя (сохраняется в localStorage)
-function getUserId() {
-    let id = localStorage.getItem('userId');
-    if (!id) {
-        id = 'user_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('userId', id);
-    }
-    return id;
-}
-
-// Сохранение в облако
-function saveToCloud() {
-    const data = JSON.parse(localStorage.getItem('pt4') || '{}');
-    db.ref('users/' + getUserId()).set(data);
-}
-
-// Загрузка из облака
-function loadFromCloud() {
-    db.ref('users/' + getUserId()).once('value').then(snapshot => {
-        const data = snapshot.val();
-        if (data) {
-            localStorage.setItem('pt4', JSON.stringify(data));
-            location.reload();
-        }
-    });
-}
-
-// Синхронизация в реальном времени
-function enableRealtimeSync() {
-    const userId = getUserId();
     
-    // Слушаем изменения
-    db.ref('users/' + userId).on('value', snapshot => {
-        const cloudData = snapshot.val();
-        if (cloudData) {
-            const localData = JSON.parse(localStorage.getItem('pt4') || '{}');
-            // Если облачные данные новее
-            if (cloudData.lastUpdated > (localData.lastUpdated || 0)) {
-                localStorage.setItem('pt4', JSON.stringify(cloudData));
-                // Обновляем UI без перезагрузки
-                updateAll();
-            }
-        }
-    });
-}
-
-// Модифицируй функцию save()
-function save() {
-    D.lastUpdated = Date.now();
-    localStorage.setItem('pt4', JSON.stringify(D));
-    saveToCloud(); // Синхронизация с облаком
-}
-
-// При загрузке страницы
-enableRealtimeSync();
-</script>
-
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root {
             --bg1: #1a1a2e; --bg2: #16213e; --bg3: #0f3460;
@@ -108,8 +34,81 @@ enableRealtimeSync();
             overflow-x: hidden;
         }
 
+        /* === AUTH SCREEN === */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .auth-logo { font-size: 4em; margin-bottom: 20px; }
+        .auth-title { font-size: 2em; margin-bottom: 10px; background: linear-gradient(45deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-subtitle { color: var(--muted); margin-bottom: 40px; }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            background: #fff;
+            color: #333;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .google-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(0,0,0,0.4); }
+        .google-btn img { width: 24px; height: 24px; }
+
+        .auth-features { margin-top: 50px; display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+        .auth-feature { text-align: center; }
+        .auth-feature-icon { font-size: 2em; margin-bottom: 8px; }
+        .auth-feature-text { font-size: 0.9em; color: var(--muted); }
+
+        /* === SYNC INDICATOR === */
+        .sync-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .sync-indicator.synced { background: rgba(0,255,136,0.2); color: var(--success); }
+        .sync-indicator.syncing { background: rgba(0,212,255,0.2); color: var(--accent); }
+        .sync-indicator.offline { background: rgba(255,71,87,0.2); color: var(--danger); }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .sync-indicator.syncing .sync-dot { animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
         /* === LAYOUT === */
-        .app { display: flex; min-height: 100vh; }
+        .app { display: none; min-height: 100vh; }
+        .app.active { display: flex; }
 
         /* === SIDEBAR (Desktop) === */
         .sidebar {
@@ -128,12 +127,32 @@ enableRealtimeSync();
         .sidebar-logo {
             font-size: 1.4em;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding: 10px;
             background: linear-gradient(45deg, var(--accent), var(--accent2));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .sidebar-user-info { flex: 1; min-width: 0; }
+        .sidebar-user-name { font-weight: 600; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-user-email { font-size: 0.75em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .sidebar-nav { flex: 1; }
 
@@ -169,6 +188,18 @@ enableRealtimeSync();
         .sidebar-xp { font-size: 1.5em; font-weight: bold; color: var(--accent); }
         .sidebar-level { color: var(--muted); font-size: 0.9em; }
 
+        .logout-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255,71,87,0.2);
+            border: none;
+            border-radius: 10px;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
         /* === MOBILE HEADER === */
         .mobile-header {
             position: fixed;
@@ -184,6 +215,20 @@ enableRealtimeSync();
         }
 
         .m-logo { font-size: 1.2em; font-weight: bold; background: linear-gradient(45deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .m-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .m-user img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
         .m-xp { background: linear-gradient(45deg, var(--accent), var(--accent2)); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: bold; }
 
         /* === BOTTOM NAV (Mobile) === */
@@ -246,7 +291,6 @@ enableRealtimeSync();
 
         /* === GRIDS === */
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
         /* === STATS === */
@@ -283,7 +327,6 @@ enableRealtimeSync();
         .btn-success { background: var(--success); color: #000; }
         .btn-danger { background: var(--danger); color: #fff; }
         .btn-sm { padding: 8px 14px; font-size: 0.85em; }
-        .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 10px; }
 
         .fab {
             position: fixed;
@@ -394,16 +437,9 @@ enableRealtimeSync();
 
         .task-content { flex: 1; min-width: 0; }
         .task-text { font-size: 0.95em; margin-bottom: 6px; }
-
         .task-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
-        .tag {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: 500;
-        }
-
+        .tag { padding: 3px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 500; }
         .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
         .priority-high { background: var(--danger); }
         .priority-medium { background: var(--warning); }
@@ -421,32 +457,14 @@ enableRealtimeSync();
             transition: all 0.2s;
         }
         .tag-btn.selected { border-color: #fff; }
-        .tag-btn:active { transform: scale(0.95); }
 
         .tag-colors { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .color-btn {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-        }
+        .color-btn { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
         .color-btn.selected { border-color: #fff; }
 
         /* === TABS === */
         .tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-
-        .tab {
-            padding: 10px 16px;
-            background: rgba(255,255,255,0.05);
-            border: none;
-            border-radius: 10px;
-            color: var(--muted);
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
+        .tab { padding: 10px 16px; background: rgba(255,255,255,0.05); border: none; border-radius: 10px; color: var(--muted); cursor: pointer; white-space: nowrap; font-size: 0.9em; transition: all 0.3s; }
         .tab.active { background: var(--accent); color: #000; }
 
         /* === CHARTS === */
@@ -455,29 +473,12 @@ enableRealtimeSync();
 
         /* === WEEK VIEW === */
         .week-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
-
-        .week-day-card {
-            flex-shrink: 0;
-            width: 110px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 12px;
-        }
+        .week-day-card { flex-shrink: 0; width: 110px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; }
         .week-day-card.today { border: 2px solid var(--accent); }
         .week-day-header { text-align: center; margin-bottom: 10px; }
         .week-day-name { color: var(--accent); font-weight: 600; font-size: 0.9em; }
         .week-day-date { font-size: 0.8em; color: var(--muted); }
-
-        .week-task {
-            font-size: 0.75em;
-            padding: 5px 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 6px;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .week-task { font-size: 0.75em; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .week-task.done { text-decoration: line-through; opacity: 0.5; }
 
         /* === GOALS === */
@@ -503,7 +504,6 @@ enableRealtimeSync();
         .mood-btns { display: flex; justify-content: center; gap: 8px; }
         .mood-btn { font-size: 2em; background: none; border: none; cursor: pointer; opacity: 0.5; transition: all 0.3s; padding: 8px; }
         .mood-btn:active, .mood-btn.selected { opacity: 1; transform: scale(1.2); }
-
         .mood-history { display: flex; gap: 5px; overflow-x: auto; padding: 10px 0; }
         .mood-day { flex-shrink: 0; text-align: center; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; }
         .mood-day-emoji { font-size: 1.3em; }
@@ -538,7 +538,8 @@ enableRealtimeSync();
 
         /* === PROFILE === */
         .profile-header { text-align: center; padding: 30px 20px; }
-        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(45deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 2.5em; margin: 0 auto 15px; }
+        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(45deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 2.5em; margin: 0 auto 15px; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         .avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
         .avatar-opt { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4em; cursor: pointer; border: 2px solid transparent; }
@@ -617,48 +618,98 @@ enableRealtimeSync();
             .mobile-header { display: none; }
             .bottom-nav { display: none; }
             .sidebar { display: flex; }
-            
-            .main {
-                margin-left: var(--sidebar);
-                padding: 30px 40px;
-                max-width: 1000px;
-            }
-            
+            .main { margin-left: var(--sidebar); padding: 30px 40px; max-width: 1000px; }
             .fab { bottom: 30px; right: 40px; }
-            
             .grid-4 { grid-template-columns: repeat(4, 1fr); }
-            .grid-2 { grid-template-columns: repeat(2, 1fr); }
-            
-            .modal {
-                border-radius: 20px;
-                max-width: 450px;
-                margin-bottom: 0;
-            }
-            
+            .modal { border-radius: 20px; max-width: 450px; margin-bottom: 0; }
             .modal-overlay { align-items: center; }
-            
             .chart-container { height: 250px; }
             .chart-container.tall { height: 320px; }
-            
             .achieve-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        @media (min-width: 1200px) {
-            .main { max-width: 1100px; }
-            .grid-4 { grid-template-columns: repeat(4, 1fr); }
+            .sync-indicator { top: 20px; }
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="app">
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div class="auth-screen" id="authScreen" style="display:none;">
+        <div class="auth-logo">🚀</div>
+        <h1 class="auth-title">Productivity Tracker</h1>
+        <p class="auth-subtitle">Твой персональный помощник в достижении целей</p>
+        
+        <button class="google-btn" onclick="signInWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Войти через Google
+        </button>
+
+        <div class="auth-features">
+            <div class="auth-feature">
+                <div class="auth-feature-icon">☁️</div>
+                <div class="auth-feature-text">Синхронизация</div>
+            </div>
+            <div class="auth-feature">
+                <div class="auth-feature-icon">📱</div>
+                <div class="auth-feature-text">Все устройства</div>
+            </div>
+            <div class="auth-feature">
+                <div class="auth-feature-icon">🔒</div>
+                <div class="auth-feature-text">Безопасность</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app" id="app">
+        <!-- Sync Indicator -->
+        <div class="sync-indicator synced" id="syncIndicator">
+            <div class="sync-dot"></div>
+            <span id="syncText">Синхронизировано</span>
+        </div>
+
         <!-- SIDEBAR (Desktop) -->
         <aside class="sidebar">
             <div class="sidebar-logo">🚀 Productivity Pro</div>
+            
+            <div class="sidebar-user">
+                <img id="sideUserPhoto" src="" alt="">
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sideUserName">Пользователь</div>
+                    <div class="sidebar-user-email" id="sideUserEmail">email@example.com</div>
+                </div>
+            </div>
+
             <nav class="sidebar-nav">
                 <button class="nav-link active" onclick="showPage('home')"><span class="icon">🏠</span> Главная</button>
                 <button class="nav-link" onclick="showPage('habits')"><span class="icon">✅</span> Привычки</button>
@@ -669,16 +720,21 @@ enableRealtimeSync();
                 <button class="nav-link" onclick="showPage('journal')"><span class="icon">📝</span> Журнал</button>
                 <button class="nav-link" onclick="showPage('profile')"><span class="icon">👤</span> Профиль</button>
             </nav>
+
             <div class="sidebar-footer">
                 <div class="sidebar-xp" id="sideXP">0 XP</div>
                 <div class="sidebar-level" id="sideLevel">Уровень 1</div>
+                <button class="logout-btn" onclick="signOut()">🚪 Выйти</button>
             </div>
         </aside>
 
         <!-- MOBILE HEADER -->
         <header class="mobile-header">
             <div class="m-logo">🚀 Productivity</div>
-            <div class="m-xp" id="mobileXP">0 XP</div>
+            <div class="m-user">
+                <div class="m-xp" id="mobileXP">0 XP</div>
+                <img id="mUserPhoto" src="" alt="" onclick="showPage('profile')">
+            </div>
         </header>
 
         <!-- MAIN -->
@@ -773,17 +829,15 @@ enableRealtimeSync();
                     <button class="tab" onclick="switchTaskTab('year')">Год</button>
                 </div>
 
-                <!-- Tag Filter -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">🏷️ Фильтр по тегам</div>
+                        <div class="card-title">🏷️ Фильтр</div>
                         <button class="btn btn-sm btn-secondary" onclick="openModal('tagModal')">+ Тег</button>
                     </div>
                     <div class="tags-container" id="tagFilter"></div>
                 </div>
 
                 <div id="taskContent"></div>
-
                 <button class="fab" onclick="openModal('taskModal')">+</button>
             </div>
 
@@ -866,11 +920,6 @@ enableRealtimeSync();
                     <div class="card-title">📋 Задачи по тегам</div>
                     <div class="chart-container"><canvas id="tagsChart"></canvas></div>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">⏰ Активность по времени</div>
-                    <div class="chart-container"><canvas id="timeChart"></canvas></div>
-                </div>
             </div>
 
             <!-- JOURNAL -->
@@ -886,19 +935,10 @@ enableRealtimeSync();
             <!-- PROFILE -->
             <div id="p-profile" class="page">
                 <div class="card profile-header">
-                    <div class="profile-avatar" id="pAvatar">😎</div>
+                    <div class="profile-avatar" id="pAvatar"></div>
                     <div style="font-size:1.3em;margin-bottom:5px;" id="pName">Пользователь</div>
-                    <div style="color:var(--muted);">Уровень <span id="pLevel">1</span> • <span id="pRank">Новичок</span></div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">✏️ Имя</div>
-                    <input type="text" class="input" id="nameInput" placeholder="Твоё имя" onchange="saveName()">
-                </div>
-
-                <div class="card">
-                    <div class="card-title">😊 Аватар</div>
-                    <div class="avatar-grid" id="avatarGrid"></div>
+                    <div style="color:var(--muted);" id="pEmail">email@example.com</div>
+                    <div style="color:var(--muted);margin-top:5px;">Уровень <span id="pLevel">1</span> • <span id="pRank">Новичок</span></div>
                 </div>
 
                 <div class="card">
@@ -907,20 +947,28 @@ enableRealtimeSync();
                 </div>
 
                 <div class="card">
+                    <div class="card-title">☁️ Синхронизация</div>
+                    <p style="color:var(--muted);font-size:0.9em;margin-bottom:15px;">Данные автоматически синхронизируются между устройствами</p>
+                    <button class="btn btn-secondary btn-sm" onclick="forceSync()">🔄 Синхронизировать сейчас</button>
+                </div>
+
+                <div class="card">
                     <div class="card-title">💾 Данные</div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
                         <button class="btn btn-secondary btn-sm" onclick="exportData()">📤 Экспорт</button>
-                        <button class="btn btn-secondary btn-sm" onclick="$('importFile').click()">📥 Импорт</button>
-                        <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
-                        <button class="btn btn-danger btn-sm" onclick="resetAll()">🗑️ Сброс</button>
+                        <button class="btn btn-danger btn-sm" onclick="resetData()">🗑️ Сбросить</button>
                     </div>
+                </div>
+
+                <div class="card">
+                    <button class="btn btn-danger" onclick="signOut()" style="width:100%;">🚪 Выйти из аккаунта</button>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- BOTTOM NAV (Mobile) -->
-    <nav class="bottom-nav">
+    <nav class="bottom-nav" id="bottomNav" style="display:none;">
         <button class="bnav-item active" onclick="showPage('home')"><span class="icon">🏠</span><span>Главная</span></button>
         <button class="bnav-item" onclick="showPage('habits')"><span class="icon">✅</span><span>Привычки</span></button>
         <button class="bnav-item" onclick="showPage('tasks')"><span class="icon">📋</span><span>Задачи</span></button>
@@ -929,7 +977,6 @@ enableRealtimeSync();
     </nav>
 
     <!-- MODALS -->
-    <!-- Habit Modal -->
     <div class="modal-overlay" id="habitModal">
         <div class="modal">
             <div class="modal-handle"></div>
@@ -945,7 +992,6 @@ enableRealtimeSync();
         </div>
     </div>
 
-    <!-- Task Modal -->
     <div class="modal-overlay" id="taskModal">
         <div class="modal">
             <div class="modal-handle"></div>
@@ -982,7 +1028,6 @@ enableRealtimeSync();
         </div>
     </div>
 
-    <!-- Tag Modal -->
     <div class="modal-overlay" id="tagModal">
         <div class="modal">
             <div class="modal-handle"></div>
@@ -1002,7 +1047,6 @@ enableRealtimeSync();
         </div>
     </div>
 
-    <!-- Goal Modal -->
     <div class="modal-overlay" id="goalModal">
         <div class="modal">
             <div class="modal-handle"></div>
@@ -1027,6 +1071,21 @@ enableRealtimeSync();
     </div>
 
     <script>
+        // === FIREBASE CONFIG ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3vjzA6gnRwyzhhcevtT3j1q11ViI-Tlk",
+            authDomain: "my-productivity-a7f03.firebaseapp.com",
+            databaseURL: "https://my-productivity-a7f03-default-rtdb.firebaseio.com",
+            projectId: "my-productivity-a7f03",
+            storageBucket: "my-productivity-a7f03.firebasestorage.app",
+            messagingSenderId: "259649528488",
+            appId: "1:259649528488:web:9cbd896103f9f0a6f4589d"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
         // === DATA ===
         let D = {
             user: { name: '', avatar: '😎', theme: '' },
@@ -1037,11 +1096,15 @@ enableRealtimeSync();
             water: {},
             focus: { total: 0, today: 0, lastDate: '', history: {} },
             xp: 0, maxStreak: 0, achievements: {},
-            challenge: { date: '', done: false, idx: 0 }
+            challenge: { date: '', done: false, idx: 0 },
+            lastUpdated: 0
         };
 
+        let currentUser = null;
+        let syncTimeout = null;
+        let isOnline = navigator.onLine;
+
         const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#9b59b6','#e056fd','#00d2d3','#ff9f43','#ee5a24','#10ac84'];
-        const AVATARS = ['😎','🚀','💪','🔥','⭐','🎯','💎','👑','🦊','🐱','🐶','🦁'];
         const THEMES = [
             { id: '', name: '🌙 Космос' },
             { id: 'theme-ocean', name: '🌊 Океан' },
@@ -1052,7 +1115,7 @@ enableRealtimeSync();
         ];
         const QUOTES = [
             { t: "Успех — сумма небольших усилий.", a: "Р. Кольер" },
-            { t: "Дисциплина — мост между целями и достижениями.", a: "Дж. Рон" },
+            { t: "Дисциплина — мост между целями.", a: "Дж. Рон" },
             { t: "Ты упадёшь до уровня своих систем.", a: "Дж. Клир" },
             { t: "Действие — ключ к успеху.", a: "П. Пикассо" }
         ];
@@ -1078,37 +1141,198 @@ enableRealtimeSync();
         // Utils
         const $ = id => document.getElementById(id);
         const today = () => new Date().toISOString().split('T')[0];
-        const save = () => localStorage.setItem('pt4', JSON.stringify(D));
-        const load = () => { const s = localStorage.getItem('pt4'); if(s) D = {...D, ...JSON.parse(s)}; };
 
+        // === AUTH ===
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(err => {
+                console.error('Auth error:', err);
+                alert('Ошибка входа: ' + err.message);
+            });
+        }
+
+        function signOut() {
+            if (confirm('Выйти из аккаунта?')) {
+                auth.signOut();
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            $('loading').style.display = 'none';
+            
+            if (user) {
+                currentUser = user;
+                $('authScreen').style.display = 'none';
+                $('app').classList.add('active');
+                $('bottomNav').style.display = 'flex';
+                
+                // Update UI with user info
+                updateUserUI(user);
+                
+                // Load data from Firebase
+                loadFromCloud();
+                
+                // Enable realtime sync
+                enableRealtimeSync();
+            } else {
+                currentUser = null;
+                $('authScreen').style.display = 'flex';
+                $('app').classList.remove('active');
+                $('bottomNav').style.display = 'none';
+            }
+        });
+
+        function updateUserUI(user) {
+            const photo = user.photoURL || '';
+            const name = user.displayName || 'Пользователь';
+            const email = user.email || '';
+
+            // Sidebar
+            $('sideUserPhoto').src = photo;
+            $('sideUserName').textContent = name;
+            $('sideUserEmail').textContent = email;
+
+            // Mobile
+            $('mUserPhoto').src = photo;
+
+            // Profile
+            $('pAvatar').innerHTML = photo ? `<img src="${photo}" alt="">` : '😎';
+            $('pName').textContent = name;
+            $('pEmail').textContent = email;
+
+            // Welcome
+            $('wName').textContent = `Привет, ${name.split(' ')[0]}!`;
+        }
+
+        // === CLOUD SYNC ===
+        function loadFromCloud() {
+            if (!currentUser) return;
+            
+            setSyncStatus('syncing');
+            
+            db.ref('users/' + currentUser.uid).once('value')
+                .then(snapshot => {
+                    const cloudData = snapshot.val();
+                    if (cloudData) {
+                        D = { ...D, ...cloudData };
+                    } else {
+                        // First time - create default data
+                        D.habits = [
+                            { id: 1, name: '🏃 Спорт' },
+                            { id: 2, name: '📚 Чтение' },
+                            { id: 3, name: '💧 Вода' }
+                        ];
+                        D.tags = [
+                            { id: 1, name: 'Работа', color: '#4d96ff' },
+                            { id: 2, name: 'Личное', color: '#6bcb77' },
+                            { id: 3, name: 'Учёба', color: '#9b59b6' }
+                        ];
+                        saveToCloud();
+                    }
+                    
+                    // Save locally
+                    localStorage.setItem('pt_local', JSON.stringify(D));
+                    
+                    // Update UI
+                    applyTheme();
+                    updateAll();
+                    setupChallenge();
+                    renderTagColors();
+                    
+                    setSyncStatus('synced');
+                })
+                .catch(err => {
+                    console.error('Load error:', err);
+                    // Try to load from local
+                    const local = localStorage.getItem('pt_local');
+                    if (local) {
+                        D = JSON.parse(local);
+                        updateAll();
+                    }
+                    setSyncStatus('offline');
+                });
+        }
+
+        function saveToCloud() {
+            if (!currentUser) return;
+            
+            D.lastUpdated = Date.now();
+            
+            // Save locally first
+            localStorage.setItem('pt_local', JSON.stringify(D));
+            
+            // Debounce cloud save
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(() => {
+                if (!isOnline) {
+                    setSyncStatus('offline');
+                    return;
+                }
+                
+                setSyncStatus('syncing');
+                
+                db.ref('users/' + currentUser.uid).set(D)
+                    .then(() => setSyncStatus('synced'))
+                    .catch(err => {
+                        console.error('Save error:', err);
+                        setSyncStatus('offline');
+                    });
+            }, 1000);
+        }
+
+        function enableRealtimeSync() {
+            if (!currentUser) return;
+            
+            db.ref('users/' + currentUser.uid).on('value', snapshot => {
+                const cloudData = snapshot.val();
+                if (cloudData && cloudData.lastUpdated > D.lastUpdated) {
+                    D = { ...D, ...cloudData };
+                    localStorage.setItem('pt_local', JSON.stringify(D));
+                    updateAll();
+                    setSyncStatus('synced');
+                }
+            });
+        }
+
+        function forceSync() {
+            loadFromCloud();
+        }
+
+        function setSyncStatus(status) {
+            const el = $('syncIndicator');
+            const text = $('syncText');
+            
+            el.className = 'sync-indicator ' + status;
+            
+            switch(status) {
+                case 'synced': text.textContent = 'Синхронизировано'; break;
+                case 'syncing': text.textContent = 'Синхронизация...'; break;
+                case 'offline': text.textContent = 'Офлайн'; break;
+            }
+        }
+
+        // Online/Offline detection
+        window.addEventListener('online', () => { isOnline = true; forceSync(); });
+        window.addEventListener('offline', () => { isOnline = false; setSyncStatus('offline'); });
+
+        // === PAGES ===
         let currentPage = 'home';
         let currentTaskTab = 'day';
         let selectedTags = [];
         let filterTag = null;
         let selectedTagColor = COLORS[0];
-
-        // Charts
         let charts = {};
 
-        // === INIT ===
-        function init() {
-            load();
-            if (!D.habits.length) {
-                D.habits = [{ id: 1, name: '🏃 Спорт' }, { id: 2, name: '📚 Чтение' }, { id: 3, name: '💧 Вода' }];
-            }
-            if (!D.tags.length) {
-                D.tags = [
-                    { id: 1, name: 'Работа', color: '#4d96ff' },
-                    { id: 2, name: 'Личное', color: '#6bcb77' },
-                    { id: 3, name: 'Учёба', color: '#9b59b6' }
-                ];
-            }
-            applyTheme();
-            updateAll();
-            setupChallenge();
-            renderTagColors();
+        function showPage(name) {
+            currentPage = name;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            $('p-' + name)?.classList.add('active');
+            document.querySelectorAll('.nav-link, .bnav-item').forEach(n => n.classList.remove('active'));
+            event?.target?.closest('.bnav-item, .nav-link')?.classList.add('active');
+            if (name === 'analytics') renderAllCharts();
         }
 
+        // === UI ===
         function updateAll() {
             updateUI();
             renderHabits();
@@ -1122,27 +1346,10 @@ enableRealtimeSync();
             renderProfile();
             renderTagFilter();
             updateFocusDisplay();
-            renderAllCharts();
         }
 
-        // === PAGES ===
-        function showPage(name) {
-            currentPage = name;
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            $('p-' + name)?.classList.add('active');
-            document.querySelectorAll('.nav-link, .bnav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(n => { if(n.textContent.toLowerCase().includes(name.slice(0,4))) n.classList.add('active'); });
-            event?.target?.closest('.bnav-item, .nav-link')?.classList.add('active');
-            if (name === 'analytics') renderAllCharts();
-        }
-
-        // === UI ===
         function updateUI() {
-            const name = D.user.name || 'Друг';
-            $('wName').textContent = `Привет, ${name}!`;
-            $('wAvatar').textContent = D.user.avatar;
             $('wDate').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
-            
             $('mobileXP').textContent = D.xp + ' XP';
             $('sideXP').textContent = D.xp + ' XP';
             $('sideLevel').textContent = `Уровень ${getLevel()} • ${getRank().replace(/[^\w\sа-яА-Я]/g,'').trim()}`;
@@ -1160,14 +1367,13 @@ enableRealtimeSync();
             $('sTotal').textContent = getTotalDone();
             $('sWater').textContent = (D.water[today()] || 0) + '/8';
             $('sPomo').textContent = D.focus.today;
-            save();
         }
 
         // === LEVEL ===
         function getLevel() { let l=1,n=100,x=D.xp; while(x>=n){x-=n;l++;n=Math.floor(n*1.4);} return l; }
         function getXPInfo() { let l=1,n=100,x=D.xp; while(x>=n){x-=n;l++;n=Math.floor(n*1.4);} return {cur:x,need:n}; }
         function getRank() { const l=getLevel(); let r=RANKS[0].t; RANKS.forEach(x=>{if(l>=x.l)r=x.t;}); return r; }
-        function addXP(n) { D.xp+=n; celebrate('✨'); save(); updateUI(); checkAchievements(); }
+        function addXP(n) { D.xp+=n; celebrate('✨'); saveToCloud(); updateUI(); checkAchievements(); }
 
         // === HABITS ===
         function renderHabits() {
@@ -1192,15 +1398,15 @@ enableRealtimeSync();
             const was = D.habitHistory[t][id];
             D.habitHistory[t][id] = !was;
             if (!was) addXP(10); else D.xp = Math.max(0, D.xp - 10);
-            save(); updateAll();
+            saveToCloud(); updateAll();
         }
 
         function addHabit() {
             const name = $('habitName').value.trim();
-            if (name) { D.habits.push({ id: Date.now(), name }); save(); closeModal('habitModal'); $('habitName').value = ''; updateAll(); celebrate('🎯'); }
+            if (name) { D.habits.push({ id: Date.now(), name }); saveToCloud(); closeModal('habitModal'); $('habitName').value = ''; updateAll(); celebrate('🎯'); }
         }
 
-        function deleteHabit(id) { if(confirm('Удалить?')){ D.habits = D.habits.filter(h=>h.id!==id); save(); renderHabits(); }}
+        function deleteHabit(id) { if(confirm('Удалить?')){ D.habits = D.habits.filter(h=>h.id!==id); saveToCloud(); renderHabits(); }}
 
         function getHabitStreak(id) { let s=0,d=new Date(); const t=today(); if(!D.habitHistory[t]?.[id])d.setDate(d.getDate()-1); while(true){const ds=d.toISOString().split('T')[0]; if(D.habitHistory[ds]?.[id]){s++;d.setDate(d.getDate()-1);}else break;} return s; }
         function getHabitPct(id) { let done=0,total=0; Object.values(D.habitHistory).forEach(day=>{if(day[id]!==undefined){total++;if(day[id])done++;}}); return total?Math.round(done/total*100):0; }
@@ -1212,428 +1418,139 @@ enableRealtimeSync();
         function renderTagColors() {
             $('tagColors').innerHTML = COLORS.map(c => `<div class="color-btn ${selectedTagColor===c?'selected':''}" style="background:${c}" onclick="selectTagColor('${c}')"></div>`).join('');
         }
-
         function selectTagColor(c) { selectedTagColor = c; renderTagColors(); }
-
         function addTag() {
             const name = $('tagName').value.trim();
-            if (name) {
-                D.tags.push({ id: Date.now(), name, color: selectedTagColor });
-                save(); closeModal('tagModal'); $('tagName').value = '';
-                renderTagFilter(); renderTaskTagsSelect(); checkAchievements();
-            }
+            if (name) { D.tags.push({ id: Date.now(), name, color: selectedTagColor }); saveToCloud(); closeModal('tagModal'); $('tagName').value = ''; renderTagFilter(); renderTaskTagsSelect(); checkAchievements(); }
         }
-
         function renderTagFilter() {
             $('tagFilter').innerHTML = `<button class="tag-btn ${filterTag===null?'selected':''}" style="background:rgba(255,255,255,0.1)" onclick="setFilterTag(null)">Все</button>` +
                 D.tags.map(t => `<button class="tag-btn ${filterTag===t.id?'selected':''}" style="background:${t.color}" onclick="setFilterTag(${t.id})">${t.name}</button>`).join('');
         }
-
         function setFilterTag(id) { filterTag = id; renderTagFilter(); renderTasks(); }
-
         function renderTaskTagsSelect() {
-            $('taskTagsSelect').innerHTML = D.tags.map(t => 
-                `<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`
-            ).join('');
+            $('taskTagsSelect').innerHTML = D.tags.map(t => `<button type="button" class="tag-btn ${selectedTags.includes(t.id)?'selected':''}" style="background:${t.color}" onclick="toggleTaskTag(${t.id})">${t.name}</button>`).join('');
         }
-
-        function toggleTaskTag(id) {
-            if (selectedTags.includes(id)) selectedTags = selectedTags.filter(x => x !== id);
-            else selectedTags.push(id);
-            renderTaskTagsSelect();
-        }
+        function toggleTaskTag(id) { if (selectedTags.includes(id)) selectedTags = selectedTags.filter(x => x !== id); else selectedTags.push(id); renderTaskTagsSelect(); }
 
         // === TASKS ===
-        function switchTaskTab(tab) {
-            currentTaskTab = tab;
-            document.querySelectorAll('#taskTabs .tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            renderTasks();
-        }
-
-        function getTaskKey(period) {
-            const d = new Date();
-            if (period === 'day') return today();
-            if (period === 'week') return `${d.getFullYear()}-W${Math.ceil((d.getDate() + new Date(d.getFullYear(), 0, 1).getDay()) / 7)}`;
-            if (period === 'month') return `${d.getFullYear()}-${d.getMonth() + 1}`;
-            if (period === 'year') return d.getFullYear().toString();
-        }
-
+        function switchTaskTab(tab) { currentTaskTab = tab; document.querySelectorAll('#taskTabs .tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); renderTasks(); }
+        function getTaskKey(period) { const d = new Date(); if (period === 'day') return today(); if (period === 'week') return `${d.getFullYear()}-W${Math.ceil((d.getDate() + new Date(d.getFullYear(), 0, 1).getDay()) / 7)}`; if (period === 'month') return `${d.getFullYear()}-${d.getMonth() + 1}`; if (period === 'year') return d.getFullYear().toString(); }
         function addTask() {
             const name = $('taskName').value.trim();
             const priority = $('taskPriority').value;
             const period = $('taskPeriod').value;
-            if (name) {
-                const key = getTaskKey(period);
-                if (!D.tasks[period][key]) D.tasks[period][key] = [];
-                D.tasks[period][key].push({ id: Date.now(), text: name, priority, done: false, tags: [...selectedTags], createdAt: new Date().toISOString() });
-                save(); closeModal('taskModal'); $('taskName').value = ''; selectedTags = [];
-                renderTasks();
-            }
+            if (name) { const key = getTaskKey(period); if (!D.tasks[period][key]) D.tasks[period][key] = []; D.tasks[period][key].push({ id: Date.now(), text: name, priority, done: false, tags: [...selectedTags], createdAt: new Date().toISOString() }); saveToCloud(); closeModal('taskModal'); $('taskName').value = ''; selectedTags = []; renderTasks(); }
         }
-
-        function toggleTask(period, key, id) {
-            const task = D.tasks[period][key]?.find(t => t.id === id);
-            if (task) { task.done = !task.done; if (task.done) addXP(5); save(); renderTasks(); }
-        }
-
-        function deleteTask(period, key, id) { D.tasks[period][key] = D.tasks[period][key].filter(t => t.id !== id); save(); renderTasks(); }
-
+        function toggleTask(period, key, id) { const task = D.tasks[period][key]?.find(t => t.id === id); if (task) { task.done = !task.done; if (task.done) addXP(5); saveToCloud(); renderTasks(); } }
+        function deleteTask(period, key, id) { D.tasks[period][key] = D.tasks[period][key].filter(t => t.id !== id); saveToCloud(); renderTasks(); }
         function renderTasks() {
             const period = currentTaskTab;
             if (period === 'week') { renderWeekView(); return; }
-
             const key = getTaskKey(period);
             let tasks = D.tasks[period][key] || [];
             if (filterTag !== null) tasks = tasks.filter(t => t.tags?.includes(filterTag));
-
             const titles = { day: 'Сегодня', month: 'Этот месяц', year: 'Этот год' };
-
-            $('taskContent').innerHTML = `<div class="card">
-                <div class="card-title">📋 ${titles[period]}</div>
-                ${tasks.length ? tasks.map(t => `
-                    <div class="task-item ${t.done ? 'done' : ''}">
-                        <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${period}','${key}',${t.id})"></div>
-                        <div class="task-content">
-                            <div class="task-text">${t.text}</div>
-                            <div class="task-tags">${(t.tags||[]).map(tid => { const tag = D.tags.find(x=>x.id===tid); return tag ? `<span class="tag" style="background:${tag.color}">${tag.name}</span>` : ''; }).join('')}</div>
-                        </div>
-                        <div class="priority-dot priority-${t.priority}"></div>
-                        <button class="delete-btn" onclick="deleteTask('${period}','${key}',${t.id})">×</button>
-                    </div>
-                `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Нет задач</p>'}
-            </div>`;
+            $('taskContent').innerHTML = `<div class="card"><div class="card-title">📋 ${titles[period]}</div>${tasks.length ? tasks.map(t => `<div class="task-item ${t.done ? 'done' : ''}"><div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${period}','${key}',${t.id})"></div><div class="task-content"><div class="task-text">${t.text}</div><div class="task-tags">${(t.tags||[]).map(tid => { const tag = D.tags.find(x=>x.id===tid); return tag ? `<span class="tag" style="background:${tag.color}">${tag.name}</span>` : ''; }).join('')}</div></div><div class="priority-dot priority-${t.priority}"></div><button class="delete-btn" onclick="deleteTask('${period}','${key}',${t.id})">×</button></div>`).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Нет задач</p>'}</div>`;
         }
-
         function renderWeekView() {
             const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
             const d = new Date(); const dow = (d.getDay()+6)%7;
             const mon = new Date(d); mon.setDate(d.getDate() - dow);
-
             let html = '<div class="week-scroll">';
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(mon); date.setDate(mon.getDate() + i);
-                const ds = date.toISOString().split('T')[0];
-                let tasks = D.tasks.day[ds] || [];
-                if (filterTag !== null) tasks = tasks.filter(t => t.tags?.includes(filterTag));
-
-                html += `<div class="week-day-card ${ds===today()?'today':''}">
-                    <div class="week-day-header"><div class="week-day-name">${days[i]}</div><div class="week-day-date">${date.getDate()}</div></div>
-                    ${tasks.slice(0,5).map(t => `<div class="week-task ${t.done?'done':''}" onclick="toggleTask('day','${ds}',${t.id})">${t.text}</div>`).join('')}
-                </div>`;
-            }
+            for (let i = 0; i < 7; i++) { const date = new Date(mon); date.setDate(mon.getDate() + i); const ds = date.toISOString().split('T')[0]; let tasks = D.tasks.day[ds] || []; if (filterTag !== null) tasks = tasks.filter(t => t.tags?.includes(filterTag)); html += `<div class="week-day-card ${ds===today()?'today':''}"><div class="week-day-header"><div class="week-day-name">${days[i]}</div><div class="week-day-date">${date.getDate()}</div></div>${tasks.slice(0,5).map(t => `<div class="week-task ${t.done?'done':''}" onclick="toggleTask('day','${ds}',${t.id})">${t.text}</div>`).join('')}</div>`; }
             html += '</div>';
             $('taskContent').innerHTML = html;
         }
 
         // === WATER ===
-        function renderWater() {
-            const count = D.water[today()] || 0;
-            $('waterCount').textContent = count;
-            let html = '';
-            for (let i = 0; i < 8; i++) html += `<div class="water-glass ${i<count?'filled':''}" onclick="setWater(${i+1})"></div>`;
-            $('waterGlasses').innerHTML = html;
-        }
-
-        function addWater(n) { const t=today(); D.water[t]=Math.max(0,Math.min(8,(D.water[t]||0)+n)); if(n>0)addXP(2); save(); renderWater(); updateUI(); }
-        function setWater(n) { D.water[today()]=n; save(); renderWater(); updateUI(); }
+        function renderWater() { const count = D.water[today()] || 0; $('waterCount').textContent = count; let html = ''; for (let i = 0; i < 8; i++) html += `<div class="water-glass ${i<count?'filled':''}" onclick="setWater(${i+1})"></div>`; $('waterGlasses').innerHTML = html; }
+        function addWater(n) { const t=today(); D.water[t]=Math.max(0,Math.min(8,(D.water[t]||0)+n)); if(n>0)addXP(2); saveToCloud(); renderWater(); updateUI(); }
+        function setWater(n) { D.water[today()]=n; saveToCloud(); renderWater(); updateUI(); }
 
         // === GOALS ===
-        function addGoal() {
-            const name = $('goalName').value.trim();
-            const target = parseInt($('goalTarget').value) || 100;
-            const deadline = $('goalDeadline').value;
-            if (name) { D.goals.push({ id: Date.now(), name, target, current: 0, deadline }); save(); closeModal('goalModal'); $('goalName').value = ''; renderGoals(); celebrate('🎯'); }
-        }
-
-        function updateGoal(id, delta) {
-            const goal = D.goals.find(g => g.id === id);
-            if (goal) { goal.current = Math.max(0, Math.min(goal.target, goal.current + delta)); if (goal.current === goal.target) celebrate('🏆'); save(); renderGoals(); }
-        }
-
-        function deleteGoal(id) { D.goals = D.goals.filter(g => g.id !== id); save(); renderGoals(); }
-
-        function renderGoals() {
-            $('goalsList').innerHTML = D.goals.length ? D.goals.map(g => {
-                const pct = Math.round(g.current / g.target * 100);
-                return `<div class="goal-item">
-                    <div class="goal-header"><div class="goal-title">${g.name}</div><div class="goal-deadline">${g.deadline || ''}</div></div>
-                    <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
-                    <div class="goal-footer">
-                        <div class="goal-pct">${g.current}/${g.target}</div>
-                        <div class="goal-btns">
-                            <button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button>
-                            <button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь цель! 🎯</p>';
-        }
+        function addGoal() { const name = $('goalName').value.trim(); const target = parseInt($('goalTarget').value) || 100; const deadline = $('goalDeadline').value; if (name) { D.goals.push({ id: Date.now(), name, target, current: 0, deadline }); saveToCloud(); closeModal('goalModal'); $('goalName').value = ''; renderGoals(); celebrate('🎯'); } }
+        function updateGoal(id, delta) { const goal = D.goals.find(g => g.id === id); if (goal) { goal.current = Math.max(0, Math.min(goal.target, goal.current + delta)); if (goal.current === goal.target) celebrate('🏆'); saveToCloud(); renderGoals(); } }
+        function deleteGoal(id) { D.goals = D.goals.filter(g => g.id !== id); saveToCloud(); renderGoals(); }
+        function renderGoals() { $('goalsList').innerHTML = D.goals.length ? D.goals.map(g => { const pct = Math.round(g.current / g.target * 100); return `<div class="goal-item"><div class="goal-header"><div class="goal-title">${g.name}</div><div class="goal-deadline">${g.deadline || ''}</div></div><div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div><div class="goal-footer"><div class="goal-pct">${g.current}/${g.target}</div><div class="goal-btns"><button class="btn btn-sm btn-secondary" onclick="updateGoal(${g.id},-1)">−</button><button class="btn btn-sm btn-primary" onclick="updateGoal(${g.id},1)">+</button><button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button></div></div></div>`; }).join('') : '<p style="color:var(--muted);text-align:center;padding:20px;">Добавь цель! 🎯</p>'; }
 
         // === FOCUS ===
         let focusInterval = null, focusSecs = 25 * 60, focusRunning = false, focusMode = 'work';
-
-        function updateFocusDisplay() {
-            const m = Math.floor(focusSecs / 60), s = focusSecs % 60;
-            $('focusTime').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            if (D.focus.lastDate !== today()) { D.focus.today = 0; D.focus.lastDate = today(); }
-            $('focusToday').textContent = D.focus.today;
-            $('focusTotal').textContent = D.focus.total;
-        }
-
-        function toggleFocus() {
-            if (focusRunning) { clearInterval(focusInterval); focusRunning = false; $('focusStartBtn').innerHTML = '▶ Старт'; }
-            else {
-                focusRunning = true; $('focusStartBtn').innerHTML = '⏸ Пауза';
-                focusInterval = setInterval(() => {
-                    focusSecs--;
-                    updateFocusDisplay();
-                    if (focusSecs <= 0) { clearInterval(focusInterval); focusRunning = false; focusComplete(); }
-                }, 1000);
-            }
-        }
-
+        function updateFocusDisplay() { const m = Math.floor(focusSecs / 60), s = focusSecs % 60; $('focusTime').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; if (D.focus.lastDate !== today()) { D.focus.today = 0; D.focus.lastDate = today(); } $('focusToday').textContent = D.focus.today; $('focusTotal').textContent = D.focus.total; }
+        function toggleFocus() { if (focusRunning) { clearInterval(focusInterval); focusRunning = false; $('focusStartBtn').innerHTML = '▶ Старт'; } else { focusRunning = true; $('focusStartBtn').innerHTML = '⏸ Пауза'; focusInterval = setInterval(() => { focusSecs--; updateFocusDisplay(); if (focusSecs <= 0) { clearInterval(focusInterval); focusRunning = false; focusComplete(); } }, 1000); } }
         function resetFocus() { clearInterval(focusInterval); focusRunning = false; focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60; updateFocusDisplay(); $('focusStartBtn').innerHTML = '▶ Старт'; $('focusStatus').textContent = 'Готов к работе'; }
         function skipFocus() { clearInterval(focusInterval); focusRunning = false; focusComplete(); }
-
-        function focusComplete() {
-            if (focusMode === 'work') {
-                D.focus.total++; D.focus.today++;
-                if (!D.focus.history[today()]) D.focus.history[today()] = 0;
-                D.focus.history[today()]++;
-                addXP(25); celebrate('🍅');
-                focusMode = 'break'; focusSecs = (parseInt($('focusBreak').value)||5)*60;
-                $('focusStatus').textContent = '☕ Перерыв!';
-            } else {
-                focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60;
-                $('focusStatus').textContent = '💪 Время работать!';
-            }
-            save(); updateFocusDisplay(); updateUI();
-            $('focusStartBtn').innerHTML = '▶ Старт';
-        }
+        function focusComplete() { if (focusMode === 'work') { D.focus.total++; D.focus.today++; if (!D.focus.history) D.focus.history = {}; if (!D.focus.history[today()]) D.focus.history[today()] = 0; D.focus.history[today()]++; addXP(25); celebrate('🍅'); focusMode = 'break'; focusSecs = (parseInt($('focusBreak').value)||5)*60; $('focusStatus').textContent = '☕ Перерыв!'; } else { focusMode = 'work'; focusSecs = (parseInt($('focusWork').value)||25)*60; $('focusStatus').textContent = '💪 Время работать!'; } saveToCloud(); updateFocusDisplay(); updateUI(); $('focusStartBtn').innerHTML = '▶ Старт'; }
 
         // === MOOD ===
-        function setMood(emoji) { D.mood[today()] = emoji; save(); renderMood(); celebrate(emoji); }
-
-        function renderMood() {
-            const t = today();
-            document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.textContent === D.mood[t]));
-            const dates = Object.keys(D.mood).sort().slice(-10);
-            $('moodHist').innerHTML = dates.map(d => `<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div></div>`).join('');
-        }
+        function setMood(emoji) { D.mood[today()] = emoji; saveToCloud(); renderMood(); celebrate(emoji); }
+        function renderMood() { const t = today(); document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.textContent === D.mood[t])); const dates = Object.keys(D.mood).sort().slice(-10); $('moodHist').innerHTML = dates.map(d => `<div class="mood-day"><div class="mood-day-emoji">${D.mood[d]}</div><div class="mood-day-date">${new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div></div>`).join(''); }
 
         // === HEATMAP ===
-        function renderHeatmap() {
-            let html = '';
-            for (let i = 59; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                const ds = d.toISOString().split('T')[0];
-                let lvl = 0;
-                if (D.habitHistory[ds]) {
-                    const done = Object.values(D.habitHistory[ds]).filter(v => v).length;
-                    const total = D.habits.length || 1;
-                    const pct = done / total;
-                    if (pct > 0) lvl = 1; if (pct >= 0.5) lvl = 2; if (pct >= 0.75) lvl = 3; if (pct >= 1) lvl = 4;
-                }
-                html += `<div class="heat-day l${lvl}" title="${ds}"></div>`;
-            }
-            $('heatmap').innerHTML = html;
-        }
+        function renderHeatmap() { let html = ''; for (let i = 59; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; let lvl = 0; if (D.habitHistory[ds]) { const done = Object.values(D.habitHistory[ds]).filter(v => v).length; const total = D.habits.length || 1; const pct = done / total; if (pct > 0) lvl = 1; if (pct >= 0.5) lvl = 2; if (pct >= 0.75) lvl = 3; if (pct >= 1) lvl = 4; } html += `<div class="heat-day l${lvl}" title="${ds}"></div>`; } $('heatmap').innerHTML = html; }
 
         // === ACHIEVEMENTS ===
-        function checkAchievements() { ACHIEVEMENTS.forEach(a => { if (!D.achievements[a.id] && a.c()) { D.achievements[a.id] = true; celebrate('🏆'); }}); save(); renderAchievements(); }
+        function checkAchievements() { ACHIEVEMENTS.forEach(a => { if (!D.achievements[a.id] && a.c()) { D.achievements[a.id] = true; celebrate('🏆'); }}); saveToCloud(); renderAchievements(); }
         function renderAchievements() { $('achieveGrid').innerHTML = ACHIEVEMENTS.map(a => `<div class="achieve-item ${D.achievements[a.id]?'unlocked':'locked'}"><div class="achieve-icon">${a.i}</div><div class="achieve-name">${a.n}</div></div>`).join(''); }
 
         // === JOURNAL ===
-        function addJournal() { const text = $('journalInput').value.trim(); if (text) { D.journal.unshift({ id: Date.now(), date: new Date().toISOString(), text }); save(); $('journalInput').value = ''; renderJournal(); addXP(5); }}
-        function deleteJournal(id) { D.journal = D.journal.filter(e => e.id !== id); save(); renderJournal(); }
+        function addJournal() { const text = $('journalInput').value.trim(); if (text) { D.journal.unshift({ id: Date.now(), date: new Date().toISOString(), text }); saveToCloud(); $('journalInput').value = ''; renderJournal(); addXP(5); }}
+        function deleteJournal(id) { D.journal = D.journal.filter(e => e.id !== id); saveToCloud(); renderJournal(); }
         function renderJournal() { $('journalList').innerHTML = D.journal.slice(0, 20).map(e => `<div class="card journal-entry"><div class="journal-date">${new Date(e.date).toLocaleString('ru-RU')}</div><div class="journal-text">${e.text}</div><button class="delete-btn" onclick="deleteJournal(${e.id})" style="float:right;margin-top:10px;">×</button></div>`).join(''); }
 
         // === CHALLENGE ===
-        function setupChallenge() { const t = today(); if (D.challenge.date !== t) { D.challenge = { date: t, done: false, idx: Math.floor(Math.random() * CHALLENGES.length) }; save(); } renderChallenge(); }
+        function setupChallenge() { const t = today(); if (D.challenge.date !== t) { D.challenge = { date: t, done: false, idx: Math.floor(Math.random() * CHALLENGES.length) }; saveToCloud(); } renderChallenge(); }
         function renderChallenge() { const ch = CHALLENGES[D.challenge.idx]; $('challengeText').textContent = ch.t; $('challengeBtn').textContent = D.challenge.done ? '✅ Выполнено!' : 'Выполнить (+50 XP)'; $('challengeBtn').disabled = D.challenge.done; if (D.challenge.done) $('challengeCard').style.opacity = '0.6'; }
-        function completeChallenge() { const ch = CHALLENGES[D.challenge.idx]; if (ch.c() && !D.challenge.done) { D.challenge.done = true; addXP(50); save(); renderChallenge(); celebrate('🎉'); } else if (!ch.c()) { alert('Сначала выполни задание! 😊'); }}
+        function completeChallenge() { const ch = CHALLENGES[D.challenge.idx]; if (ch.c() && !D.challenge.done) { D.challenge.done = true; addXP(50); saveToCloud(); renderChallenge(); celebrate('🎉'); } else if (!ch.c()) { alert('Сначала выполни задание! 😊'); }}
 
         // === PROFILE ===
         function renderProfile() {
-            $('pAvatar').textContent = D.user.avatar;
-            $('pName').textContent = D.user.name || 'Пользователь';
             $('pLevel').textContent = getLevel();
             $('pRank').textContent = getRank().replace(/[^\w\sа-яА-Я]/g,'').trim();
-            $('nameInput').value = D.user.name;
-            $('avatarGrid').innerHTML = AVATARS.map(a => `<div class="avatar-opt ${D.user.avatar===a?'selected':''}" onclick="setAvatar('${a}')">${a}</div>`).join('');
             $('themeGrid').innerHTML = THEMES.map(t => `<div class="theme-opt ${D.user.theme===t.id?'selected':''}" style="background:linear-gradient(135deg,var(--bg1),var(--bg3));" onclick="setTheme('${t.id}')">${t.name}</div>`).join('');
         }
-
-        function saveName() { D.user.name = $('nameInput').value; save(); updateAll(); }
-        function setAvatar(a) { D.user.avatar = a; save(); updateAll(); }
-        function setTheme(t) { D.user.theme = t; save(); applyTheme(); renderProfile(); }
+        function setTheme(t) { D.user.theme = t; saveToCloud(); applyTheme(); renderProfile(); }
         function applyTheme() { document.body.className = D.user.theme; }
 
         // === CHARTS ===
         function renderAllCharts() {
-            renderHabitsBarChart();
-            renderWeeklyChart();
-            renderMonthlyChart();
-            renderHabitsPieChart();
-            renderMoodChart();
-            renderTagsChart();
-            renderTimeChart();
-            renderFocusChart();
+            // Weekly
+            const ctx1 = $('weeklyChart')?.getContext('2d');
+            if (ctx1) { if (charts.weekly) charts.weekly.destroy(); const labels = [], values = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' })); const ds = d.toISOString().split('T')[0]; values.push(D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0); } charts.weekly = new Chart(ctx1, { type: 'line', data: { labels, datasets: [{ data: values, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
+            
+            // Monthly
+            const ctx2 = $('monthlyChart')?.getContext('2d');
+            if (ctx2) { if (charts.monthly) charts.monthly.destroy(); const labels = [], values = []; for (let i = 29; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); labels.push(d.getDate()); const ds = d.toISOString().split('T')[0]; const done = D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0; const total = D.habits.length || 1; values.push(Math.round(done / total * 100)); } charts.monthly = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ data: values, backgroundColor: values.map(v => v >= 80 ? '#00ff88' : v >= 50 ? '#ffd700' : '#ff6b6b'), borderRadius: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 0 }, grid: { display: false } } } } }); }
+            
+            // Habits Pie
+            const ctx3 = $('habitsPieChart')?.getContext('2d');
+            if (ctx3) { if (charts.pie) charts.pie.destroy(); charts.pie = new Chart(ctx3, { type: 'doughnut', data: { labels: D.habits.map(h => h.name.slice(0,15)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } } }); }
+            
+            // Mood
+            const ctx4 = $('moodChart')?.getContext('2d');
+            if (ctx4) { if (charts.mood) charts.mood.destroy(); const moodToNum = { '😢': 1, '😕': 2, '😐': 3, '🙂': 4, '😄': 5 }; const labels = [], values = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toISOString().split('T')[0]; labels.push(d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })); values.push(moodToNum[D.mood[ds]] || null); } charts.mood = new Chart(ctx4, { type: 'line', data: { labels, datasets: [{ data: values, borderColor: '#f472b6', backgroundColor: 'rgba(244,114,182,0.2)', fill: true, tension: 0.4, spanGaps: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 1, max: 5, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 45 }, grid: { display: false } } } } }); }
+            
+            // Tags
+            const ctx5 = $('tagsChart')?.getContext('2d');
+            if (ctx5) { if (charts.tags) charts.tags.destroy(); const tagCounts = {}; D.tags.forEach(t => tagCounts[t.id] = { name: t.name, color: t.color, count: 0 }); Object.values(D.tasks).forEach(period => { Object.values(period).forEach(tasks => { tasks.forEach(task => { (task.tags || []).forEach(tid => { if (tagCounts[tid]) tagCounts[tid].count++; }); }); }); }); const data = Object.values(tagCounts); charts.tags = new Chart(ctx5, { type: 'pie', data: { labels: data.map(d => d.name), datasets: [{ data: data.map(d => d.count), backgroundColor: data.map(d => d.color) }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } } }); }
+            
+            // Habits bar
+            const ctx6 = $('habitsChart')?.getContext('2d');
+            if (ctx6) { if (charts.habits) charts.habits.destroy(); charts.habits = new Chart(ctx6, { type: 'bar', data: { labels: D.habits.map(h => h.name.slice(0,12)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS.slice(0, D.habits.length), borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
+            
+            // Focus
+            const ctx7 = $('focusChart')?.getContext('2d');
+            if (ctx7) { if (charts.focus) charts.focus.destroy(); const labels = [], values = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' })); const ds = d.toISOString().split('T')[0]; values.push(D.focus.history?.[ds] || 0); } charts.focus = new Chart(ctx7, { type: 'bar', data: { labels, datasets: [{ data: values, backgroundColor: '#ff6b6b', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } } }); }
         }
 
-        function renderHabitsBarChart() {
-            const ctx = $('habitsChart')?.getContext('2d');
-            if (!ctx) return;
-            if (charts.habits) charts.habits.destroy();
-            charts.habits = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: D.habits.map(h => h.name.slice(0,12)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS.slice(0, D.habits.length), borderRadius: 6 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } }
-            });
-        }
-
-        function renderWeeklyChart() {
-            const ctx = $('weeklyChart')?.getContext('2d');
-            if (!ctx) return;
-            const labels = [], values = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' }));
-                const ds = d.toISOString().split('T')[0];
-                values.push(D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0);
-            }
-            if (charts.weekly) charts.weekly.destroy();
-            charts.weekly = new Chart(ctx, {
-                type: 'line',
-                data: { labels, datasets: [{ label: 'Привычки', data: values, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.2)', fill: true, tension: 0.4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } }
-            });
-        }
-
-        function renderMonthlyChart() {
-            const ctx = $('monthlyChart')?.getContext('2d');
-            if (!ctx) return;
-            const labels = [], values = [];
-            for (let i = 29; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                labels.push(d.getDate());
-                const ds = d.toISOString().split('T')[0];
-                const done = D.habitHistory[ds] ? Object.values(D.habitHistory[ds]).filter(v => v).length : 0;
-                const total = D.habits.length || 1;
-                values.push(Math.round(done / total * 100));
-            }
-            if (charts.monthly) charts.monthly.destroy();
-            charts.monthly = new Chart(ctx, {
-                type: 'bar',
-                data: { labels, datasets: [{ data: values, backgroundColor: values.map(v => v >= 80 ? '#00ff88' : v >= 50 ? '#ffd700' : '#ff6b6b'), borderRadius: 2 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 0 }, grid: { display: false } } } }
-            });
-        }
-
-        function renderHabitsPieChart() {
-            const ctx = $('habitsPieChart')?.getContext('2d');
-            if (!ctx) return;
-            if (charts.pie) charts.pie.destroy();
-            charts.pie = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: D.habits.map(h => h.name.slice(0,15)), datasets: [{ data: D.habits.map(h => getHabitPct(h.id)), backgroundColor: COLORS }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff', padding: 10 } } } }
-            });
-        }
-
-        function renderMoodChart() {
-            const ctx = $('moodChart')?.getContext('2d');
-            if (!ctx) return;
-            const moodToNum = { '😢': 1, '😕': 2, '😐': 3, '🙂': 4, '😄': 5 };
-            const labels = [], values = [];
-            for (let i = 13; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                const ds = d.toISOString().split('T')[0];
-                labels.push(d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
-                values.push(moodToNum[D.mood[ds]] || null);
-            }
-            if (charts.mood) charts.mood.destroy();
-            charts.mood = new Chart(ctx, {
-                type: 'line',
-                data: { labels, datasets: [{ data: values, borderColor: '#f472b6', backgroundColor: 'rgba(244,114,182,0.2)', fill: true, tension: 0.4, spanGaps: true }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 1, max: 5, ticks: { color: '#888', callback: v => ['','😢','😕','😐','🙂','😄'][v] }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 45 }, grid: { display: false } } } }
-            });
-        }
-
-        function renderTagsChart() {
-            const ctx = $('tagsChart')?.getContext('2d');
-            if (!ctx) return;
-            const tagCounts = {};
-            D.tags.forEach(t => tagCounts[t.id] = { name: t.name, color: t.color, count: 0 });
-            Object.values(D.tasks).forEach(period => {
-                Object.values(period).forEach(tasks => {
-                    tasks.forEach(task => { (task.tags || []).forEach(tid => { if (tagCounts[tid]) tagCounts[tid].count++; }); });
-                });
-            });
-            const data = Object.values(tagCounts);
-            if (charts.tags) charts.tags.destroy();
-            charts.tags = new Chart(ctx, {
-                type: 'pie',
-                data: { labels: data.map(d => d.name), datasets: [{ data: data.map(d => d.count), backgroundColor: data.map(d => d.color) }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
-            });
-        }
-
-        function renderTimeChart() {
-            const ctx = $('timeChart')?.getContext('2d');
-            if (!ctx) return;
-            const hours = Array(24).fill(0);
-            Object.values(D.tasks).forEach(period => {
-                Object.values(period).forEach(tasks => {
-                    tasks.forEach(task => { if (task.createdAt) { const h = new Date(task.createdAt).getHours(); hours[h]++; } });
-                });
-            });
-            if (charts.time) charts.time.destroy();
-            charts.time = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: hours.map((_, i) => i + ':00'), datasets: [{ data: hours, backgroundColor: 'rgba(0,212,255,0.6)', borderRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888', maxRotation: 90 }, grid: { display: false } } } }
-            });
-        }
-
-        function renderFocusChart() {
-            const ctx = $('focusChart')?.getContext('2d');
-            if (!ctx) return;
-            const labels = [], values = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                labels.push(d.toLocaleDateString('ru-RU', { weekday: 'short' }));
-                const ds = d.toISOString().split('T')[0];
-                values.push(D.focus.history?.[ds] || 0);
-            }
-            if (charts.focus) charts.focus.destroy();
-            charts.focus = new Chart(ctx, {
-                type: 'bar',
-                data: { labels, datasets: [{ data: values, backgroundColor: '#ff6b6b', borderRadius: 6 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#888' }, grid: { display: false } } } }
-            });
-        }
-
-        // === QUOTE ===
+        // === UTILS ===
         function newQuote() { const q = QUOTES[Math.floor(Math.random() * QUOTES.length)]; $('qText').textContent = `"${q.t}"`; $('qAuthor').textContent = `— ${q.a}`; }
-
-        // === MODAL ===
         function openModal(id) { $(id).classList.add('active'); if (id === 'taskModal') { selectedTags = []; renderTaskTagsSelect(); } }
         function closeModal(id) { $(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }); });
-
-        // === DATA ===
-        function exportData() { const blob = new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'productivity-backup.json'; a.click(); }
-        function importData(e) { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = ev => { try { D = JSON.parse(ev.target.result); save(); updateAll(); alert('Восстановлено!'); } catch { alert('Ошибка!'); } }; reader.readAsText(file); } }
-        function resetAll() { if (confirm('Удалить все данные?')) { localStorage.removeItem('pt4'); location.reload(); } }
-
-        // === CELEBRATE ===
         function celebrate(emoji) { const el = document.createElement('div'); el.className = 'celebrate'; el.textContent = emoji; document.body.appendChild(el); setTimeout(() => el.remove(), 800); }
-
-        // === START ===
-        init();
+        function exportData() { const blob = new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'productivity-backup.json'; a.click(); }
+        function resetData() { if (confirm('Удалить ВСЕ данные? Это действие нельзя отменить!')) { D = { user: { name: '', avatar: '😎', theme: '' }, habits: [], habitHistory: {}, tasks: { day: {}, week: {}, month: {}, year: {} }, tags: [], goals: [], journal: [], mood: {}, water: {}, focus: { total: 0, today: 0, lastDate: '', history: {} }, xp: 0, maxStreak: 0, achievements: {}, challenge: { date: '', done: false, idx: 0 }, lastUpdated: 0 }; saveToCloud(); location.reload(); } }
     </script>
 </body>
 </html>
